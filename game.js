@@ -9,6 +9,7 @@ const recordEl = document.getElementById('record');
 const shieldUI = document.getElementById('shieldUI');
 const leftBtn = document.getElementById('leftBtn');
 const rightBtn = document.getElementById('rightBtn');
+const loadingEl = document.getElementById('loading');
 
 canvas.width = 360;
 canvas.height = 640;
@@ -25,7 +26,7 @@ let player = {
   dy: 0,
   gravity: 0.2,
   jump: -6,
-  color: '#00796b'
+  color: '#ffea00'
 };
 
 let platforms = [];
@@ -33,6 +34,19 @@ let score = 0;
 let keys = { left: false, right: false };
 let platformGap = 60;
 let hasShield = false;
+const stars = [];
+
+function initStars() {
+  stars.length = 0;
+  for (let i = 0; i < 80; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 2 + 1,
+      speed: Math.random() * 0.5 + 0.5
+    });
+  }
+}
 
 function difficulty() {
   return Math.min(score / 5000, 1);
@@ -62,6 +76,7 @@ function createPlatform(y) {
     type,
     boost,
     used: false,
+    opacity: 1,
     dx: type === 'moving' ? (Math.random() < 0.5 ? -1 : 1) * (1 + diff) : 0
   };
 }
@@ -74,6 +89,7 @@ function resetGame() {
   score = 0;
   platformGap = 60;
   hasShield = false;
+  initStars();
   // starting platform at the bottom under the player
   platforms.push({
     x: player.x - 15,
@@ -95,6 +111,11 @@ function resetGame() {
 function update() {
   const diff = difficulty();
   const scrollSpeed = 1 + diff;
+
+  stars.forEach(s => {
+    s.y += s.speed * scrollSpeed;
+    if (s.y > canvas.height) s.y = 0;
+  });
 
   player.gravity = 0.2 + diff * 0.2;
   player.dy += player.gravity;
@@ -150,7 +171,11 @@ function update() {
       if (p.x < 0 || p.x + p.width > canvas.width) p.dx *= -1;
     }
 
-    if (p.y > canvas.height || p.used) {
+    if (p.type === 'break' && p.used) {
+      p.opacity -= 0.05;
+    }
+
+    if (p.y > canvas.height || (p.used && p.opacity <= 0)) {
       platforms.splice(idx, 1);
       platforms.push(createPlatform(minY - platformGap));
       minY = Math.min(...platforms.map(pl => pl.y));
@@ -167,22 +192,53 @@ function update() {
     }
   }
 
-  scoreEl.textContent = 'Score: ' + Math.floor(score / 100);
   shieldUI.style.display = hasShield ? 'inline' : 'none';
 }
 
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  ctx.fillStyle = player.color;
-  ctx.fillRect(player.x, player.y, player.width, player.height);
-  if (hasShield) {
-    ctx.strokeStyle = '#2196f3';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(player.x - 2, player.y - 2, player.width + 4, player.height + 4);
+function drawRocket(x, y, w, h) {
+  ctx.fillStyle = '#ffea00';
+  ctx.fillRect(x + w * 0.25, y, w * 0.5, h);
+  ctx.beginPath();
+  ctx.moveTo(x + w * 0.25, y);
+  ctx.lineTo(x + w * 0.5, y - h * 0.5);
+  ctx.lineTo(x + w * 0.75, y);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#ff3d00';
+  ctx.fillRect(x, y + h * 0.6, w * 0.25, h * 0.2);
+  ctx.fillRect(x + w * 0.75, y + h * 0.6, w * 0.25, h * 0.2);
+  if (player.dy < 0) {
+    ctx.fillStyle = '#ff3d00';
+    ctx.beginPath();
+    ctx.moveTo(x + w * 0.5, y + h);
+    ctx.lineTo(x + w * 0.35, y + h + 10);
+    ctx.lineTo(x + w * 0.65, y + h + 10);
+    ctx.closePath();
+    ctx.fill();
   }
+  ctx.fillStyle = '#00e5ff';
+  ctx.beginPath();
+  ctx.arc(x + w * 0.5, y + h * 0.4, w * 0.15, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function draw() {
+  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  gradient.addColorStop(0, '#0b0f1a');
+  gradient.addColorStop(1, '#000');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = '#fff';
+  ctx.shadowBlur = 0;
+  stars.forEach(s => {
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+    ctx.fill();
+  });
 
   platforms.forEach(p => {
+    ctx.globalAlpha = p.opacity;
     switch (p.type) {
       case 'break':
         ctx.fillStyle = '#8d6e63';
@@ -191,36 +247,51 @@ function draw() {
         ctx.fillStyle = '#00695c';
         break;
       case 'deadly':
-        ctx.fillStyle = '#d32f2f';
+        ctx.fillStyle = '#ff3d00';
         break;
       default:
         ctx.fillStyle = '#004d40';
     }
     ctx.fillRect(p.x, p.y, p.width, p.height);
+    ctx.globalAlpha = 1;
     if (p.boost) {
       switch (p.boost) {
         case 'spring':
-          ctx.fillStyle = '#ffb74d';
-          ctx.fillRect(p.x + p.width / 2 - 5, p.y - 10, 10, 10);
+          ctx.fillStyle = '#ffea00';
+          ctx.shadowColor = '#ffea00';
           break;
         case 'rocket':
-          ctx.fillStyle = '#ff5722';
-          ctx.fillRect(p.x + p.width / 2 - 4, p.y - 15, 8, 15);
+          ctx.fillStyle = '#ff3d00';
+          ctx.shadowColor = '#ff3d00';
           break;
         case 'shield':
-          ctx.fillStyle = '#2196f3';
-          ctx.beginPath();
-          ctx.arc(p.x + p.width / 2, p.y - 5, 5, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.fillStyle = '#00e5ff';
+          ctx.shadowColor = '#00e5ff';
           break;
       }
+      ctx.shadowBlur = 10;
+      if (p.boost === 'spring') {
+        ctx.fillRect(p.x + p.width / 2 - 5, p.y - 10, 10, 10);
+      } else if (p.boost === 'rocket') {
+        ctx.fillRect(p.x + p.width / 2 - 4, p.y - 15, 8, 15);
+      } else if (p.boost === 'shield') {
+        ctx.beginPath();
+        ctx.arc(p.x + p.width / 2, p.y - 5, 5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.shadowBlur = 0;
     }
   });
 
-  ctx.fillStyle = '#000';
-  ctx.font = '16px sans-serif';
-  ctx.fillText('Score: ' + Math.floor(score / 100), 10, 20);
-  ctx.fillText('Record: ' + highscore, 250, 20);
+  drawRocket(player.x, player.y, player.width, player.height);
+  if (hasShield) {
+    ctx.strokeStyle = '#00e5ff';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(player.x - 2, player.y - 2, player.width + 4, player.height + 4);
+  }
+
+  scoreEl.textContent = 'Score: ' + Math.floor(score / 100);
+  shieldUI.style.display = hasShield ? 'inline' : 'none';
 }
 
 function loop() {
@@ -284,6 +355,12 @@ window.addEventListener('deviceorientation', event => {
       keys.right = false;
     }
   }
+});
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    loadingEl.style.display = 'none';
+  }, 1000);
 });
 
 resetGame();

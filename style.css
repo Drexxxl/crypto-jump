@@ -1,12 +1,14 @@
 body {
   margin: 0;
   overflow: hidden;
-  background-color: #e0f7fa;
-  font-family: sans-serif;
+  background-color: #0b0f1a;
+  font-family: "Courier New", monospace;
+  color: #00e5ff;
 }
 canvas {
   display: block;
   margin: 0 auto;
+  background: transparent;
 }
 
 #ui {
@@ -21,11 +23,12 @@ canvas {
 }
 
 #ui span {
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
+  background: rgba(0, 0, 0, 0.6);
+  color: #00e5ff;
   padding: 4px 8px;
   border-radius: 4px;
   pointer-events: none;
+  font-family: "Courier New", monospace;
 }
 
 #startBtn,
@@ -36,11 +39,12 @@ canvas {
   transform: translate(-50%, -50%);
   padding: 10px 20px;
   font-size: 18px;
-  background: #00796b;
-  color: #fff;
+  background: #00e5ff;
+  color: #0b0f1a;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-family: "Courier New", monospace;
 }
 
 #restartBtn,
@@ -63,9 +67,24 @@ canvas {
   height: 60px;
   border-radius: 50%;
   border: none;
-  background: #00796b;
-  color: #fff;
+  background: rgba(0, 229, 255, 0.3);
+  color: #00e5ff;
   font-size: 32px;
   opacity: 0.6;
   pointer-events: auto;
+}
+
+#loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0b0f1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #ffea00;
+  font-family: "Courier New", monospace;
 }
