@@ -26,4 +26,4 @@
 
 1. **Флаг в BotFather.** В настройках бота включите `Open in Full Screen` в разделе *Configure Mini App*.
 2. **Параметр `mode=fullscreen`.** Добавляйте его к deep‑link или inline‑кнопке, например `https://t.me/SpaceJumpBot/app?startapp=play&mode=fullscreen`.
-3. **Вызов `requestFullscreen()` из кода.** В приложении используется библиотека `@telegram-apps/sdk`, запрос выполняется после монтирования главного меню.
+3. **Вызов `requestFullscreen()` из кода.** В приложении используется библиотека `@telegram-apps/sdk`, запрос производится при инициализации.
