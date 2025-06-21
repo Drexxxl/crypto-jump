@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg-stars {
+  background: radial-gradient(ellipse at center, rgba(0,255,255,0.1), transparent),
+              url('/stars.svg');
+  background-size: cover;
+}
