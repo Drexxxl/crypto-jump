@@ -56,12 +56,6 @@ canvas {
 #gameOver {
   display: none;
   z-index: 2;
-  font-size: 2rem;
-  color: #ffea00;
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 
