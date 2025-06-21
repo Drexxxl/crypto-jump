@@ -275,27 +275,49 @@ function update() {
   shieldUI.style.display = hasShield ? 'inline' : 'none';
 }
 
+function 
 function drawRocket(x, y, w, h) {
-  ctx.fillStyle = '#ffea00';
+  // body gradient
+  const gradient = ctx.createLinearGradient(x, y, x, y + h);
+  gradient.addColorStop(0, '#ffe259');
+  gradient.addColorStop(1, '#ffa751');
+  ctx.fillStyle = gradient;
   ctx.fillRect(x + w * 0.25, y, w * 0.5, h);
+
+  // nose
+  ctx.fillStyle = '#ffd500';
   ctx.beginPath();
   ctx.moveTo(x + w * 0.25, y);
   ctx.lineTo(x + w * 0.5, y - h * 0.5);
   ctx.lineTo(x + w * 0.75, y);
   ctx.closePath();
   ctx.fill();
-  ctx.fillStyle = '#ff3d00';
-  ctx.fillRect(x, y + h * 0.6, w * 0.25, h * 0.2);
-  ctx.fillRect(x + w * 0.75, y + h * 0.6, w * 0.25, h * 0.2);
+
+  // wings
+  ctx.fillStyle = '#ff6d00';
+  ctx.fillRect(x, y + h * 0.6, w * 0.25, h * 0.25);
+  ctx.fillRect(x + w * 0.75, y + h * 0.6, w * 0.25, h * 0.25);
+
+  // flame when moving up
   if (player.dy < 0) {
-    ctx.fillStyle = '#ff3d00';
+    const flameGrad = ctx.createLinearGradient(x + w*0.5, y + h, x + w*0.5, y + h + 15);
+    flameGrad.addColorStop(0, '#ff6d00');
+    flameGrad.addColorStop(1, '#ffd500');
+    ctx.fillStyle = flameGrad;
     ctx.beginPath();
     ctx.moveTo(x + w * 0.5, y + h);
-    ctx.lineTo(x + w * 0.35, y + h + 10);
-    ctx.lineTo(x + w * 0.65, y + h + 10);
+    ctx.lineTo(x + w * 0.35, y + h + 15);
+    ctx.lineTo(x + w * 0.65, y + h + 15);
     ctx.closePath();
     ctx.fill();
   }
+
+  // window
+  ctx.fillStyle = '#00e5ff';
+  ctx.beginPath();
+  ctx.arc(x + w * 0.5, y + h * 0.4, w * 0.15, 0, Math.PI * 2);
+  ctx.fill();
+}
   ctx.fillStyle = '#00e5ff';
   ctx.beginPath();
   ctx.arc(x + w * 0.5, y + h * 0.4, w * 0.15, 0, Math.PI * 2);

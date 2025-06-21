@@ -1,78 +1,62 @@
-html, body {
-  margin: 0;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-  background-color: #0b0f1a;
-  font-family: "Courier New", monospace;
-  color: #00e5ff;
-  font-size: calc(10px + 1vmin);
-}
-canvas {
-  display: block;
-  margin: 0 auto;
-  background: transparent;
-  touch-action: none;
-  width: 100%;
-  height: 100%;
+
+/* Redesigned game screen */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap');
+
+:root{
+  --accent:#00e5ff;
+  --accent2:#ff3d00;
+  --bg1:#050B18;
+  --bg2:#0B1429;
+  --fg:#ffffff;
 }
 
-#ui {
-  position: absolute;
-  top: 10px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 10px;
-  pointer-events: none;
+html,body{
+  margin:0;
+  padding:0;
+  height:100%;
+  overflow:hidden;
+  font-family:'Orbitron',sans-serif;
+  color:var(--fg);
 }
 
-#ui span {
-  background: rgba(0, 0, 0, 0.6);
-  color: #00e5ff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  pointer-events: none;
-  font-family: "Courier New", monospace;
-  font-size: 1rem;
+/* starfield */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:radial-gradient(ellipse at bottom,var(--bg2) 0%,var(--bg1) 100%);
+  z-index:-3;
+}
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><circle cx="2" cy="2" r="1" fill="white"/></svg>') repeat;
+  animation:stars 80s linear infinite;
+  opacity:0.7;
+  z-index:-2;
+}
+@keyframes stars{
+  from{transform:translateY(0);}
+  to{transform:translateY(-3000px);}
 }
 
-#startBtn,
-#restartBtn {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 10px 20px;
-  font-size: 1.6rem;
-  background: #00e5ff;
-  color: #0b0f1a;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: "Courier New", monospace;
-  z-index: 2;
+#gameCanvas{
+  display:block;
+  width:100vw;
+  height:100vh;
 }
 
-#restartBtn,
-#gameOver {
-  display: none;
-  z-index: 2;
+/* HUD */
+.hud{
+  position:fixed;
+  top:8px;
+  left:8px;
+  padding:4px 8px;
+  background:rgba(0,0,0,0.4);
+  border:1px solid var(--accent);
+  border-radius:6px;
+  font-size:14px;
+  pointer-events:none;
 }
 
-
-#loading {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #0b0f1a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  color: #ffea00;
-  font-family: "Courier New", monospace;
-}
