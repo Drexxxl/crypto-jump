@@ -1,11 +1,12 @@
 
-import { Home, List, Trophy, Grid, User } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Button } from "@/components/ui/button";
+import { Home, List, Trophy, Grid, User, Settings } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function SpaceJumpMainMenu() {
   return (
     <div className="relative w-full h-screen bg-black overflow-hidden p-8">
-      {/* Космический фон */}
+      {/* Новый CSS-анимированный звёздный фон */}
       <div className="absolute inset-0 z-0">
         <div className="stars-layer"></div>
       </div>
@@ -15,13 +16,13 @@ export default function SpaceJumpMainMenu() {
         <div className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform">
           <img src="https://cdn-icons-png.flaticon.com/512/3791/3791513.png" alt="TON" className="w-6 h-6" />
         </div>
-        <h1 className="text-white text-5xl font-black tracking-widest font-orbitron">SpaceJump</h1>
+        <h1 className="text-white text-5xl font-black tracking-widest font-['Orbitron'],sans-serif">SpaceJump</h1>
         <div className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform">
           <img src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png" alt="Settings" className="w-6 h-6" />
         </div>
       </div>
 
-      {/* Кнопка старт */}
+      {/* Главная кнопка Играть */}
       <div className="flex justify-center items-center h-full z-10 relative">
         <motion.button
           whileHover={{ scale: 1.1 }}
@@ -41,12 +42,12 @@ export default function SpaceJumpMainMenu() {
         <IconButton icon={<User />} />
       </div>
 
-      <style jsx>{`
+      <style jsx>{\`
         .stars-layer {
           position: absolute;
           width: 100%;
           height: 100%;
-          background: radial-gradient(ellipse at bottom, #0d1b2a 0%, #000 100%);
+          background: radial-gradient(ellipse at bottom, #0d1b2a 0%, #000000 100%);
           overflow: hidden;
         }
         .stars-layer::before {
@@ -58,10 +59,12 @@ export default function SpaceJumpMainMenu() {
           animation: moveStars 60s linear infinite;
           opacity: 0.3;
         }
+
         @keyframes moveStars {
           from { transform: translateY(0); }
           to { transform: translateY(-1000px); }
         }
+
         .neon-button {
           box-shadow: 0 0 20px #00f6ff, 0 0 40px #00f6ff, 0 0 60px #00f6ff;
           transition: box-shadow 0.3s ease;
@@ -69,8 +72,11 @@ export default function SpaceJumpMainMenu() {
         .neon-button:hover {
           box-shadow: 0 0 30px #00f6ff, 0 0 60px #00f6ff, 0 0 90px #00f6ff;
         }
+        .neon-glow {
+          box-shadow: 0 0 10px #00f6ff, 0 0 20px #00f6ff;
+        }
         .icon-wrapper {
-          background: rgba(255,255,255,0.1);
+          background: rgba(255, 255, 255, 0.1);
           padding: 0.75rem;
           border-radius: 9999px;
           display: flex;
@@ -78,7 +84,7 @@ export default function SpaceJumpMainMenu() {
           justify-content: center;
           box-shadow: 0 0 10px #00f6ff, 0 0 20px #00f6ff;
         }
-      `}</style>
+      \`}</style>
     </div>
   );
 }
@@ -86,7 +92,9 @@ export default function SpaceJumpMainMenu() {
 function IconButton({ icon }) {
   return (
     <div className="hover:scale-105 transition-transform">
-      <div className="icon-wrapper">{icon}</div>
+      <div className="icon-wrapper">
+        {icon}
+      </div>
     </div>
   );
 }
