@@ -13,6 +13,18 @@ let platforms = [];
 let keys = {};
 let ground;
 let score = 0;
+let stars = [];
+
+function initStars() {
+  stars = [];
+  for (let i = 0; i < 50; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 2 + 1
+    });
+  }
+}
 
 function playSound(freq, duration, type = 'sine') {
   const osc = audioCtx.createOscillator();
@@ -46,6 +58,7 @@ function init() {
     vy: 0
   };
   platforms = [];
+  initStars();
   let y = ground.y - 50;
   for (let i = 0; i < 7; i++) {
     platforms.push({
@@ -73,6 +86,13 @@ function loop() {
 }
 
 function update() {
+  stars.forEach(s => {
+    s.y += 0.5;
+    if (s.y > canvas.height) {
+      s.y = 0;
+      s.x = Math.random() * canvas.width;
+    }
+  });
   platforms.forEach(p => {
     p.x += p.dx;
     if (p.x < 0 || p.x + p.width > canvas.width) {
@@ -129,6 +149,13 @@ function update() {
         p.dx = Math.random() < 0.5 ? (Math.random() > 0.5 ? 1 : -1) * 1.5 : 0;
       }
     });
+    stars.forEach(s => {
+      s.y += diff;
+      if (s.y > canvas.height) {
+        s.y -= canvas.height;
+        s.x = Math.random() * canvas.width;
+      }
+    });
     score += Math.floor(diff);
     scoreElement.textContent = score;
   }
@@ -153,6 +180,10 @@ function update() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#fff';
+  stars.forEach(s => {
+    ctx.fillRect(s.x, s.y, s.size, s.size);
+  });
   // draw ground
   ctx.fillStyle = '#444';
   ctx.fillRect(ground.x, ground.y, ground.width, ground.height);
