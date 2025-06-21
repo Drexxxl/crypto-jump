@@ -11,7 +11,8 @@ const loadingEl = document.getElementById('loading');
 
 const BASE_WIDTH = 360;
 const BASE_HEIGHT = 640;
-const maxGapY = 150;
+const MAX_GAP_RATIO = 0.15; // max distance between platforms relative to screen
+const MIN_PLATFORMS = 8;    // minimum number of platforms visible
 let scale = 1;
 
 function resizeGame() {
@@ -107,8 +108,7 @@ function resetGame() {
   player.dy = 0;
   platforms = [];
   score = 0;
-  const heightRatio = canvas.height / BASE_HEIGHT;
-  platformGap = 50 * heightRatio;
+  platformGap = Math.min(50 * scale, canvas.height * MAX_GAP_RATIO);
   hasShield = false;
   rocketActive = false;
   shieldStartTime = 0;
@@ -129,7 +129,7 @@ function resetGame() {
     used: false,
     dx: 0
   });
-  const initialCount = Math.ceil(canvas.height / platformGap);
+  const initialCount = Math.max(MIN_PLATFORMS, Math.ceil(canvas.height / platformGap));
   for (let i = 1; i <= initialCount; i++) {
     platforms.push(createPlatform(startY - i * platformGap));
   }
@@ -164,8 +164,7 @@ function update() {
     player.y = scrollPoint;
     platforms.forEach(p => (p.y += dy));
     score += Math.floor(dy);
-    const heightRatio = canvas.height / BASE_HEIGHT;
-    platformGap = Math.min(50 + diff * 30, maxGapY) * heightRatio;
+    platformGap = Math.min((50 + diff * 30) * scale, canvas.height * MAX_GAP_RATIO);
   }
 
   let minY = Math.min(...platforms.map(p => p.y));
@@ -219,6 +218,11 @@ function update() {
       minY = Math.min(...platforms.map(pl => pl.y));
     }
   });
+  const needed = Math.max(MIN_PLATFORMS, Math.ceil(canvas.height / platformGap));
+  while (platforms.length < needed) {
+    platforms.push(createPlatform(minY - platformGap));
+    minY = Math.min(...platforms.map(pl => pl.y));
+  }
 
   if (player.y > canvas.height) {
     if (hasShield) {
@@ -434,9 +438,35 @@ window.addEventListener('load', () => {
   }, 1000);
 });
 
-window.addEventListener('resize', () => {
+function handleResize() {
+  const prevW = canvas.width;
+  const prevH = canvas.height;
   resizeGame();
-  resetGame();
-});
+  const ratioX = canvas.width / prevW;
+  const ratioY = canvas.height / prevH;
+
+  player.x *= ratioX;
+  player.y *= ratioY;
+  player.width = 30 * scale;
+  player.height = 30 * scale;
+  player.jump = -6 * scale;
+
+  platforms.forEach(p => {
+    p.x *= ratioX;
+    p.y *= ratioY;
+    p.width = 60 * scale;
+    p.height = 10 * scale;
+  });
+
+  platformGap = Math.min(platformGap * ratioY, canvas.height * MAX_GAP_RATIO);
+  let minY = Math.min(...platforms.map(pl => pl.y));
+  const needed = Math.max(MIN_PLATFORMS, Math.ceil(canvas.height / platformGap));
+  while (platforms.length < needed) {
+    platforms.push(createPlatform(minY - platformGap));
+    minY = Math.min(...platforms.map(pl => pl.y));
+  }
+}
+
+window.addEventListener('resize', handleResize);
 
 resetGame();
