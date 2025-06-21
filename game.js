@@ -61,7 +61,12 @@ function update() {
   });
 
   if (player.y > canvas.height) {
-    alert('Game Over! Score: ' + Math.floor(score / 100));
+    const finalScore = Math.floor(score / 100);
+    alert('Game Over! Score: ' + finalScore);
+    if (window.Telegram && Telegram.WebApp && Telegram.WebApp.sendData) {
+      Telegram.WebApp.sendData(JSON.stringify({ score: finalScore }));
+      Telegram.WebApp.close();
+    }
     document.location.reload();
   }
 }
