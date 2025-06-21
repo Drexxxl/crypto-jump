@@ -15,7 +15,8 @@ SpaceJump is a simplified Doodle Jump style game intended to be used as a Telegr
 
 ## Running Locally
 
-Simply open `index.html` in a browser to play the game locally.
+Simply open `index.html` in a browser to play the game locally. Use the arrow
+keys or **A**/**D** to move the rocket left and right.
 
 The game expects audio and image assets inside an `assets` directory:
 

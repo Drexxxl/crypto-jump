@@ -47,15 +47,17 @@ function initStars() {
 
 function playJumpSound() {
   jumpSound.currentTime = 0;
-  jumpSound.play();
+  // prevent unhandled promise rejections if audio can't start
+  jumpSound.play().catch(() => {});
 }
 
 function playGameOverSound() {
   gameOverSound.currentTime = 0;
-  gameOverSound.play();
+  gameOverSound.play().catch(() => {});
 }
 const GRAVITY = 0.4;
 const GROUND_HEIGHT = 20;
+const PLATFORM_WIDTH = 60;
 
 function init() {
   ground = { x: 0, y: canvas.height - GROUND_HEIGHT, width: canvas.width, height: GROUND_HEIGHT };
@@ -71,9 +73,9 @@ function init() {
   let y = ground.y - 50;
   for (let i = 0; i < 7; i++) {
     platforms.push({
-      x: Math.random() * 340,
+      x: Math.random() * (canvas.width - PLATFORM_WIDTH),
       y: y,
-      width: 60,
+      width: PLATFORM_WIDTH,
       height: 10,
       dx: Math.random() < 0.5 ? (Math.random() > 0.5 ? 1 : -1) * 1.5 : 0
     });
@@ -111,11 +113,11 @@ function update() {
   rocket.vy += GRAVITY;
   rocket.y += rocket.vy;
 
-  if (keys['ArrowLeft']) {
+  if (keys['ArrowLeft'] || keys['a'] || keys['A']) {
     rocket.x -= 4;
     if (rocket.x < -rocket.width) rocket.x = canvas.width;
   }
-  if (keys['ArrowRight']) {
+  if (keys['ArrowRight'] || keys['d'] || keys['D']) {
     rocket.x += 4;
     if (rocket.x > canvas.width) rocket.x = -rocket.width;
   }
@@ -154,7 +156,7 @@ function update() {
       p.y += diff;
       if (p.y > canvas.height) {
         p.y -= canvas.height;
-        p.x = Math.random() * 340;
+        p.x = Math.random() * (canvas.width - PLATFORM_WIDTH);
         p.dx = Math.random() < 0.5 ? (Math.random() > 0.5 ? 1 : -1) * 1.5 : 0;
       }
     });
@@ -248,6 +250,9 @@ musicToggle.addEventListener('click', () => {
 });
 
 document.addEventListener('keydown', e => {
+  if (['ArrowLeft', 'ArrowRight', 'a', 'A', 'd', 'D'].includes(e.key)) {
+    e.preventDefault();
+  }
   keys[e.key] = true;
 });
 
