@@ -119,3 +119,41 @@ body {
   padding: 10px 0;
 }
 .bottom-nav span { font-size: 1.5rem; }
+.bottom-nav a {
+  font-size: 1.5rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.top-right a.icon {
+  color: inherit;
+  text-decoration: none;
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu-list li {
+  background: rgba(0,0,0,0.5);
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 0 20px;
+}
+
+.settings-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  gap: 5px;
+}
