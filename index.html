@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceJump</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="menu">
+    <div id="stars"></div>
+    <div class="menu-ui">
+        <header>
+            <span class="currency">0</span>
+            <button id="settings" aria-label="Настройки">&#9881;</button>
+        </header>
+        <main>
+            <h1>SpaceJump</h1>
+            <p id="bestDisplay"></p>
+            <button id="play">Играть</button>
+        </main>
+        <nav>
+            <a href="#" class="active" aria-label="Главная">🏠</a>
+            <a href="#" aria-label="Цели">🎯</a>
+            <a href="#" aria-label="Достижения">🏆</a>
+            <a href="#" aria-label="Инвентарь">🎒</a>
+            <a href="#" aria-label="Профиль">👤</a>
+        </nav>
+    </div>
+    <script>
+        const best = localStorage.getItem('best');
+        document.getElementById('bestDisplay').textContent = best ? `Лучший результат: ${best}` : '';
+        document.getElementById('play').onclick = function() {
+            window.location.href = 'game.html';
+        };
+    </script>
+</body>
+</html>
