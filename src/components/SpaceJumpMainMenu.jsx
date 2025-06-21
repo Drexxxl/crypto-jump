@@ -6,6 +6,10 @@ import {
   Grid,
   User,
   Users,
+  Shield,
+  RotateCcw,
+  Zap,
+  Share2,
   ChevronLeft,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -190,7 +194,7 @@ export default function SpaceJumpMainMenu() {
             <div className="flex grow items-center justify-center z-20">
               <div className={`w-full ${screen === "free" || screen === "survival" ? "h-full" : "max-w-md"}`}>
                 {screen !== "free" && screen !== "survival" && (
-                  <h2 className="text-center text-white text-2xl mb-4">
+                  <h2 className="panel-header text-white">
                     {titles[screen]}
                   </h2>
                 )}
@@ -269,17 +273,20 @@ function Leaderboard() {
   }));
   return (
     <div className="text-white panel panel-texture p-4">
-      <table className="w-full mb-4 text-left">
+      <table className="w-full mb-4 text-left text-sm">
         <thead>
           <tr>
-            <th>Игрок</th>
-            <th className="text-right">Уровень</th>
+            <th className="pb-2">Игрок</th>
+            <th className="text-right pb-2">Уровень</th>
           </tr>
         </thead>
         <tbody>
-          {players.map((p) => (
-            <tr key={p.user} className="border-t border-white/20">
-              <td>{p.user}</td>
+          {players.map((p, i) => (
+            <tr key={p.user} className="border-t border-white/10 hover:bg-white/5">
+              <td className="flex items-center gap-2">
+                {i < 3 && <Trophy className="w-4 h-4 text-yellow-400" />}
+                {p.user}
+              </td>
               <td className="text-right">{p.level}</td>
             </tr>
           ))}
@@ -292,10 +299,18 @@ function Leaderboard() {
 
 function Achievements() {
   return (
-    <div className="text-white text-center panel panel-texture p-4">
-      <h3 className="mb-4 text-xl">Ваши достижения</h3>
-      <div className="h-32 border border-dashed border-white/40 rounded-md flex items-center justify-center text-white/50">
-        скоро здесь появятся карточки
+    <div className="text-white text-center panel panel-texture p-4 space-y-4">
+      <h3 className="panel-header">Ваши достижения</h3>
+      <div className="grid grid-cols-3 gap-3 text-sm">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="flex flex-col items-center justify-center py-4 bg-white/10 rounded"
+          >
+            <Trophy className="mb-1" />
+            <span>#{i}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -303,15 +318,21 @@ function Achievements() {
 
 function Shop() {
   const items = [
-    "Щит 10 сек",
-    "Возрождение",
-    "Нитро 10 сек",
+    { label: "Щит 10 сек", icon: <Shield className="w-5 h-5" /> },
+    { label: "Возрождение", icon: <RotateCcw className="w-5 h-5" /> },
+    { label: "Нитро 10 сек", icon: <Zap className="w-5 h-5" /> },
   ];
   return (
     <div className="space-y-4 text-white">
       {items.map((item) => (
-        <div key={item} className="flex justify-between items-center panel panel-texture p-4">
-          <span>{item} – бесплатно</span>
+        <div
+          key={item.label}
+          className="flex justify-between items-center panel panel-texture p-4"
+        >
+          <div className="flex items-center gap-2">
+            {item.icon}
+            <span>{item.label} – бесплатно</span>
+          </div>
           <Button onClick={() => window.open('#', '_blank')}>Получить</Button>
         </div>
       ))}
@@ -332,8 +353,8 @@ function Profile() {
       </div>
       <div>
         <p className="mb-1">Лучший уровень</p>
-        <div className="h-2 bg-white/20 rounded">
-          <div className="h-2 bg-blue-500 w-1/2"></div>
+        <div className="progress">
+          <div style={{ width: '50%' }} />
         </div>
       </div>
       <div>
@@ -391,9 +412,9 @@ function Referral() {
       <p>Приглашайте друзей по ссылке и получайте бонусы TON.</p>
       <Button
         onClick={() => navigator.clipboard.writeText('https://t.me/your_bot')}
-        className="mx-auto"
+        className="mx-auto flex items-center gap-2"
       >
-        Скопировать ссылку
+        <Share2 className="w-4 h-4" /> Скопировать ссылку
       </Button>
     </div>
   );
