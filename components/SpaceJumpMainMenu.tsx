@@ -51,7 +51,7 @@ export default function SpaceJumpMainMenu() {
         <IconButton icon={<User />} />
       </div>
 
-      <style jsx>{\`
+        <style jsx>{`
         .stars-layer {
           position: absolute;
           width: 100%;
@@ -88,7 +88,7 @@ export default function SpaceJumpMainMenu() {
           justify-content: center;
           box-shadow: 0 0 10px #00f6ff, 0 0 20px #00f6ff;
         }
-      \`}</style>
+        `}</style>
     </div>
   );
 }

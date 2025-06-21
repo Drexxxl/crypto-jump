@@ -1,4 +1,6 @@
 
+import React from 'react';
+
 export const metadata = {
   title: 'SpaceJump',
   description: 'Cosmic arcade game',
