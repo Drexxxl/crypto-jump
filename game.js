@@ -17,7 +17,9 @@ let scale = 1;
 function resizeGame() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  scale = canvas.width / BASE_WIDTH;
+  const scaleX = canvas.width / BASE_WIDTH;
+  const scaleY = canvas.height / BASE_HEIGHT;
+  scale = Math.min(scaleX, scaleY);
 }
 
 resizeGame();
@@ -111,10 +113,14 @@ function resetGame() {
   shieldStartTime = 0;
   rocketStartTime = 0;
   initStars();
-  // starting platform at the bottom under the player
+  // starting platform directly under the player
+  const startY = Math.min(
+    canvas.height - 50 * scale,
+    player.y + player.height + 20 * scale
+  );
   platforms.push({
     x: player.x - 15 * scale,
-    y: canvas.height - 50 * scale,
+    y: startY,
     width: 60 * scale,
     height: 10 * scale,
     type: 'normal',
@@ -123,7 +129,7 @@ function resetGame() {
     dx: 0
   });
   for (let i = 1; i < 10; i++) {
-    platforms.push(createPlatform(canvas.height - 50 * scale - i * platformGap));
+    platforms.push(createPlatform(startY - i * platformGap));
   }
   scoreEl.textContent = 'Score: 0';
   shieldUI.style.display = 'none';
