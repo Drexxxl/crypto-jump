@@ -39,7 +39,7 @@ function playSound(freq, duration, type = 'sine') {
 }
 
 function playJumpSound() {
-  playSound(440, 0.1, 'square');
+  playSound(520, 0.1, 'triangle');
 }
 
 function playGameOverSound() {
@@ -156,6 +156,7 @@ function update() {
         s.x = Math.random() * canvas.width;
       }
     });
+    ground.y += diff;
     score += Math.floor(diff);
     scoreElement.textContent = score;
   }
