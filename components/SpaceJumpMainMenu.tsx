@@ -13,21 +13,11 @@ export default function SpaceJumpMainMenu() {
       {/* Верхняя панель */}
       <div className="absolute top-8 left-0 right-0 z-10 flex justify-between items-center px-8">
         <div className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/3791/3791513.png"
-            alt="TON"
-            className="w-6 h-6"
-          />
+          <img src="https://cdn-icons-png.flaticon.com/512/3791/3791513.png" alt="TON" className="w-6 h-6" />
         </div>
-        <h1 className="text-white text-5xl font-black tracking-widest font-['Orbitron'],sans-serif">
-          SpaceJump
-        </h1>
+        <h1 className="text-white text-5xl font-black tracking-widest font-orbitron">SpaceJump</h1>
         <div className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png"
-            alt="Settings"
-            className="w-6 h-6"
-          />
+          <img src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png" alt="Settings" className="w-6 h-6" />
         </div>
       </div>
 
@@ -51,7 +41,7 @@ export default function SpaceJumpMainMenu() {
         <IconButton icon={<User />} />
       </div>
 
-        <style jsx>{`
+      <style jsx>{`
         .stars-layer {
           position: absolute;
           width: 100%;
@@ -88,7 +78,7 @@ export default function SpaceJumpMainMenu() {
           justify-content: center;
           box-shadow: 0 0 10px #00f6ff, 0 0 20px #00f6ff;
         }
-        `}</style>
+      `}</style>
     </div>
   );
 }

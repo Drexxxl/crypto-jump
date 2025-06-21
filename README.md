@@ -1,2 +1,2 @@
-# SpaceJump Game
-Ready to fly.
+# SpaceJump
+Run `npm install` then `npm run dev`.
