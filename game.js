@@ -6,6 +6,7 @@ const restartBtn = document.getElementById('restartBtn');
 const gameOverEl = document.getElementById('gameOver');
 const scoreEl = document.getElementById('score');
 const recordEl = document.getElementById('record');
+const shieldUI = document.getElementById('shieldUI');
 const leftBtn = document.getElementById('leftBtn');
 const rightBtn = document.getElementById('rightBtn');
 
@@ -31,6 +32,7 @@ let platforms = [];
 let score = 0;
 let keys = { left: false, right: false };
 let platformGap = 60;
+let hasShield = false;
 
 function difficulty() {
   return Math.min(score / 5000, 1);
@@ -40,16 +42,25 @@ function createPlatform(y) {
   const diff = difficulty();
   const r = Math.random();
   let type = 'normal';
-  if (r < 0.05 + diff * 0.05) type = 'deadly';
-  else if (r < 0.15 + diff * 0.1) type = 'break';
-  else if (r < 0.3 + diff * 0.1) type = 'moving';
-  else if (r < 0.4 + diff * 0.1) type = 'spring';
+  if (r < diff * 0.1) type = 'deadly';
+  else if (r < 0.1 + diff * 0.2) type = 'break';
+  else if (r < 0.3 + diff * 0.2) type = 'moving';
+
+  let boost = null;
+  if (Math.random() < 0.05) {
+    const br = Math.random();
+    if (br < 0.34) boost = 'spring';
+    else if (br < 0.67) boost = 'rocket';
+    else boost = 'shield';
+  }
+
   return {
     x: Math.random() * (canvas.width - 60),
     y,
     width: 60,
     height: 10,
     type,
+    boost,
     used: false,
     dx: type === 'moving' ? (Math.random() < 0.5 ? -1 : 1) * (1 + diff) : 0
   };
@@ -62,10 +73,23 @@ function resetGame() {
   platforms = [];
   score = 0;
   platformGap = 60;
-  for (let i = 0; i < 10; i++) {
-    platforms.push(createPlatform(i * platformGap));
+  hasShield = false;
+  // starting platform at the bottom under the player
+  platforms.push({
+    x: player.x - 15,
+    y: canvas.height - 50,
+    width: 60,
+    height: 10,
+    type: 'normal',
+    boost: null,
+    used: false,
+    dx: 0
+  });
+  for (let i = 1; i < 10; i++) {
+    platforms.push(createPlatform(canvas.height - 50 - i * platformGap));
   }
   scoreEl.textContent = 'Score: 0';
+  shieldUI.style.display = 'none';
 }
 
 function update() {
@@ -103,10 +127,21 @@ function update() {
       player.dy > 0
     ) {
       if (p.type === 'deadly') {
-        endGame();
-        return;
+        if (hasShield) {
+          hasShield = false;
+          player.dy = player.jump;
+        } else {
+          endGame();
+          return;
+        }
+      } else {
+        let bounce = player.jump;
+        if (p.boost === 'spring') bounce = player.jump * 1.5;
+        if (p.boost === 'rocket') bounce = player.jump * 4;
+        player.dy = bounce;
+        if (p.boost === 'shield') hasShield = true;
       }
-      player.dy = p.type === 'spring' ? player.jump * 1.5 : player.jump;
+      p.boost = null;
       if (p.type === 'break') p.used = true;
     }
 
@@ -122,9 +157,18 @@ function update() {
     }
   });
 
-  if (player.y > canvas.height) endGame();
+  if (player.y > canvas.height) {
+    if (hasShield) {
+      hasShield = false;
+      player.y = canvas.height - 60;
+      player.dy = player.jump;
+    } else {
+      endGame();
+    }
+  }
 
   scoreEl.textContent = 'Score: ' + Math.floor(score / 100);
+  shieldUI.style.display = hasShield ? 'inline' : 'none';
 }
 
 function draw() {
@@ -132,6 +176,11 @@ function draw() {
 
   ctx.fillStyle = player.color;
   ctx.fillRect(player.x, player.y, player.width, player.height);
+  if (hasShield) {
+    ctx.strokeStyle = '#2196f3';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(player.x - 2, player.y - 2, player.width + 4, player.height + 4);
+  }
 
   platforms.forEach(p => {
     switch (p.type) {
@@ -141,9 +190,6 @@ function draw() {
       case 'moving':
         ctx.fillStyle = '#00695c';
         break;
-      case 'spring':
-        ctx.fillStyle = '#ffb74d';
-        break;
       case 'deadly':
         ctx.fillStyle = '#d32f2f';
         break;
@@ -151,6 +197,24 @@ function draw() {
         ctx.fillStyle = '#004d40';
     }
     ctx.fillRect(p.x, p.y, p.width, p.height);
+    if (p.boost) {
+      switch (p.boost) {
+        case 'spring':
+          ctx.fillStyle = '#ffb74d';
+          ctx.fillRect(p.x + p.width / 2 - 5, p.y - 10, 10, 10);
+          break;
+        case 'rocket':
+          ctx.fillStyle = '#ff5722';
+          ctx.fillRect(p.x + p.width / 2 - 4, p.y - 15, 8, 15);
+          break;
+        case 'shield':
+          ctx.fillStyle = '#2196f3';
+          ctx.beginPath();
+          ctx.arc(p.x + p.width / 2, p.y - 5, 5, 0, Math.PI * 2);
+          ctx.fill();
+          break;
+      }
+    }
   });
 
   ctx.fillStyle = '#000';

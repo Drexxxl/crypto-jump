@@ -2,6 +2,12 @@
 
 Crypto Jump is a simple Doodle Jump style game built for Telegram Web Apps. The game is written in vanilla JavaScript and can be launched inside a Telegram chat via a bot.
 
+## New Features
+
+- Guaranteed starting platform so you never fall right away.
+- Difficulty scales with your score: fewer platforms and more hazards appear over time.
+- Look out for power-ups on platforms: springs for a higher jump, rockets for a huge boost and shields that save you from one fall or enemy.
+
 ## Running Locally
 
 Open `index.html` in a web browser to play the game locally. Use the arrow keys on desktop or tilt your phone on mobile to move the character.
