@@ -223,3 +223,8 @@ document.addEventListener('keydown', e => {
 document.addEventListener('keyup', e => {
   keys[e.key] = false;
 });
+
+// Show the main menu when the page first loads
+window.addEventListener('DOMContentLoaded', () => {
+  menu.classList.add('show');
+});
