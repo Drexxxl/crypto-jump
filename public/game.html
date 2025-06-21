@@ -4,11 +4,23 @@
   <meta charset="UTF-8">
   <title>Crypto Jump – Game</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-  <link rel="stylesheet" href="styles/game.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/game.css">
 </head>
 <body>
+  <div id="starfield"></div>
+  <div id="loading">🚀 Launching…</div>
+  <div id="ui">
+    <span id="score">Score: 0</span>
+    <span id="record">Record: 0</span>
+    <span id="shieldUI" style="display:none">Shield!</span>
+  </div>
+  <button id="startBtn">Start</button>
+  <button id="restartBtn">Restart</button>
+  <div id="gameOver">Game Over!</div>
   <canvas id="gameCanvas"></canvas>
+  <script src="scripts/telegram.js"></script>
   <script src="scripts/game.js"></script>
 </body>
 </html>
