@@ -7,11 +7,15 @@ export default function DoodleJumpGame({ onExit }) {
   const [score, setScore] = useState(0);
   const [restartKey, setRestartKey] = useState(0);
   const maxHeightRef = useRef(0);
+  const [tons, setTons] = useState(0);
+  const shieldRef = useRef(0);
 
   const handleRestart = () => {
     setScore(0);
     setGameOver(false);
     setRestartKey((k) => k + 1);
+    setTons(0);
+    shieldRef.current = 0;
   };
 
   useEffect(() => {
@@ -35,6 +39,7 @@ export default function DoodleJumpGame({ onExit }) {
 
     const platforms = [];
     const coins = [];
+    const boosts = [];
     const pW = 60;
     const pH = 10;
     const count = 10;
@@ -48,7 +53,14 @@ export default function DoodleJumpGame({ onExit }) {
       if (Math.random() < 0.5) {
         coins.push({ x: x + pW / 2, y: y - 15, r: 6, phase: Math.random() * Math.PI * 2, platform: p });
       }
+      if (Math.random() < 0.1) {
+        const type = Math.random() < 0.5 ? "spring" : "shield";
+        boosts.push({ x: x + pW / 2, y: y - 25, type, platform: p });
+      }
     }
+
+    // стартовая платформа
+    platforms.push({ x: canvas.width / 2 - pW / 2, y: canvas.height - 40, vx: 0, moving: false, floor: true });
 
     let worldY = 0;
 
@@ -79,10 +91,13 @@ export default function DoodleJumpGame({ onExit }) {
     window.addEventListener("touchend", onTouchEnd);
 
     let animId;
-    const speed = 5;
+    const baseSpeed = 5;
     const jumpVy = -8;
-    const gravity = 0.2;
+    const baseGravity = 0.2;
     const loop = () => {
+      const difficulty = 1 + maxHeightRef.current / 2000;
+      const speed = baseSpeed * difficulty;
+      const gravity = baseGravity * difficulty;
       player.vy += gravity;
       player.y += player.vy;
       if (keys["ArrowLeft"] || touchDir === -1) player.x -= speed;
@@ -92,7 +107,7 @@ export default function DoodleJumpGame({ onExit }) {
 
       platforms.forEach((p) => {
         if (p.moving) {
-          p.x += p.vx;
+          p.x += p.vx * difficulty;
           if (p.x < 0 || p.x > canvas.width - pW) p.vx *= -1;
         }
       });
@@ -126,18 +141,31 @@ export default function DoodleJumpGame({ onExit }) {
             if (Math.random() < 0.5) {
               coins.push({ x: p.x + pW / 2, y: p.y - 15, r: 6, phase: 0, platform: p });
             }
+            if (Math.random() < 0.1) {
+              const type = Math.random() < 0.5 ? "spring" : "shield";
+              boosts.push({ x: p.x + pW / 2, y: p.y - 25, type, platform: p });
+            }
           }
         });
         coins.forEach((c, i) => {
           c.y += diff;
           if (c.y - c.r > canvas.height) coins.splice(i, 1);
         });
+        boosts.forEach((b, i) => {
+          b.y += diff;
+          if (b.y > canvas.height) boosts.splice(i, 1);
+        });
       }
 
       if (player.y > canvas.height) {
-        setGameOver(true);
-        cancelAnimationFrame(animId);
-        return;
+        if (shieldRef.current > performance.now()) {
+          player.y = canvas.height - 100;
+          player.vy = jumpVy;
+        } else {
+          setGameOver(true);
+          cancelAnimationFrame(animId);
+          return;
+        }
       }
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -145,6 +173,13 @@ export default function DoodleJumpGame({ onExit }) {
       ctx.font = player.h + "px sans-serif";
       ctx.fillStyle = "#fff";
       ctx.fillText("🚀", player.x, player.y + player.h);
+      if (shieldRef.current > performance.now()) {
+        ctx.strokeStyle = "#0ff";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(player.x + player.w / 2, player.y + player.h / 2, player.w, 0, Math.PI * 2);
+        ctx.stroke();
+      }
       if (player.vy < 0) {
         ctx.fillStyle = "orange";
         ctx.beginPath();
@@ -161,12 +196,17 @@ export default function DoodleJumpGame({ onExit }) {
       coins.forEach((c) => {
         c.phase += 0.1;
         const r = c.r * (1 + Math.sin(c.phase) * 0.3);
-        ctx.fillStyle = "gold";
+        ctx.fillStyle = "#0098ea";
         ctx.beginPath();
         ctx.arc(c.x, c.y, r, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = "orange";
-        ctx.stroke();
+        ctx.fillStyle = "#fff";
+        ctx.beginPath();
+        ctx.moveTo(c.x, c.y - r * 0.6);
+        ctx.lineTo(c.x - r * 0.4, c.y + r * 0.6);
+        ctx.lineTo(c.x + r * 0.4, c.y + r * 0.6);
+        ctx.closePath();
+        ctx.fill();
       });
 
       coins.forEach((c, i) => {
@@ -179,11 +219,44 @@ export default function DoodleJumpGame({ onExit }) {
         ) {
           coins.splice(i, 1);
           setScore((s) => s + 5);
+          setTons((t) => t + 1);
+        }
+      });
+
+      // boosts
+      boosts.forEach((b) => {
+        if (b.type === "spring") {
+          ctx.fillStyle = "#4ade80";
+          ctx.fillRect(b.x - 10, b.y - 5, 20, 10);
+          ctx.fillRect(b.x - 4, b.y - 15, 8, 10);
+        } else {
+          ctx.strokeStyle = "#0ff";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, 10, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      });
+
+      boosts.forEach((b, i) => {
+        const br = 12;
+        if (
+          player.x + player.w > b.x - br &&
+          player.x < b.x + br &&
+          player.y + player.h > b.y - br &&
+          player.y < b.y + br
+        ) {
+          boosts.splice(i, 1);
+          if (b.type === "spring") {
+            player.vy = jumpVy * 1.5;
+          } else {
+            shieldRef.current = performance.now() + 2000 + Math.random() * 4000;
+          }
         }
       });
       ctx.fillStyle = "#fff";
       const heightScore = Math.floor(maxHeightRef.current / 100);
-      ctx.fillText("Score: " + (heightScore + score), 10, 20);
+      ctx.fillText("Score: " + (heightScore + score) + " TON: " + tons, 10, 20);
 
       animId = requestAnimationFrame(loop);
     };
@@ -205,7 +278,7 @@ export default function DoodleJumpGame({ onExit }) {
       {gameOver && (
         <div className="mb-4 text-center">
           <p className="text-xl">Game Over</p>
-          <p className="mb-2">Score: {Math.floor(maxHeightRef.current / 100) + score}</p>
+          <p className="mb-2">Score: {Math.floor(maxHeightRef.current / 100) + score} | TON: {tons}</p>
           <div className="flex gap-2 justify-center">
             <Button onClick={handleRestart}>Перезапуск</Button>
             <Button onClick={onExit}>В меню</Button>
