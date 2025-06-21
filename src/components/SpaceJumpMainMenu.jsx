@@ -158,7 +158,7 @@ export default function SpaceJumpMainMenu() {
         )}
       </AnimatePresence>
 
-      <style>{`
+      <style jsx>{`
         .stars-layer {
           position: absolute;
           width: 100%;
