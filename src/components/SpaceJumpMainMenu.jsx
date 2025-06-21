@@ -5,6 +5,7 @@ import {
   Trophy,
   Grid,
   User,
+  Users,
   ChevronLeft,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,6 +24,7 @@ export default function SpaceJumpMainMenu() {
     profile: "Профиль",
     ton: "О проекте",
     settings: "Настройки",
+    referral: "Рефералы",
     free: "Бесплатная игра",
     survival: "Выживание",
     hardcore: "Хардкор",
@@ -46,6 +48,8 @@ export default function SpaceJumpMainMenu() {
         return <Shop />;
       case "profile":
         return <Profile />;
+      case "referral":
+        return <Referral />;
       case "free":
         return <DoodleJumpGame onExit={() => setScreen("menu")} />;
       case "survival":
@@ -147,6 +151,7 @@ export default function SpaceJumpMainMenu() {
                 <IconButton ariaLabel="Достижения" icon={<Trophy />} onClick={() => setScreen("trophy")}/>
                 <IconButton ariaLabel="Меню" icon={<Grid />} onClick={() => setScreen("grid")}/>
                 <IconButton ariaLabel="Профиль" icon={<User />} onClick={() => setScreen("profile")}/>
+                <IconButton ariaLabel="Рефералы" icon={<Users />} onClick={() => setScreen("referral")}/>
               </motion.div>
             </>
           )}
@@ -237,19 +242,19 @@ function GameModeMenu({ onFree, onSurvival, onHardcore }) {
     <div className="space-y-4 text-white">
       <div
         onClick={onFree}
-        className="flex justify-between items-center bg-white/10 p-4 rounded-md cursor-pointer hover:bg-white/20"
+        className="flex justify-between items-center panel panel-texture p-4 cursor-pointer hover:bg-white/20"
       >
         <span>Free – играть бесплатно</span>
       </div>
       <div
         onClick={onSurvival}
-        className="flex justify-between items-center bg-white/10 p-4 rounded-md cursor-pointer hover:bg-white/20"
+        className="flex justify-between items-center panel panel-texture p-4 cursor-pointer hover:bg-white/20"
       >
         <span>Выживание – бесплатно</span>
       </div>
       <div
         onClick={onHardcore}
-        className="flex justify-between items-center bg-white/10 p-4 rounded-md cursor-pointer hover:bg-white/20"
+        className="flex justify-between items-center panel panel-texture p-4 cursor-pointer hover:bg-white/20"
       >
         <span>Хардкор – 1 жизнь</span>
       </div>
@@ -263,7 +268,7 @@ function Leaderboard() {
     level: 10 - i,
   }));
   return (
-    <div className="text-white">
+    <div className="text-white panel panel-texture p-4">
       <table className="w-full mb-4 text-left">
         <thead>
           <tr>
@@ -287,7 +292,7 @@ function Leaderboard() {
 
 function Achievements() {
   return (
-    <div className="text-white text-center">
+    <div className="text-white text-center panel panel-texture p-4">
       <h3 className="mb-4 text-xl">Ваши достижения</h3>
       <div className="h-32 border border-dashed border-white/40 rounded-md flex items-center justify-center text-white/50">
         скоро здесь появятся карточки
@@ -305,9 +310,9 @@ function Shop() {
   return (
     <div className="space-y-4 text-white">
       {items.map((item) => (
-        <div key={item} className="flex justify-between items-center bg-white/10 p-4 rounded-md">
-          <span>{item} – 0.1 TON</span>
-          <Button onClick={() => window.open('#', '_blank')}>Купить</Button>
+        <div key={item} className="flex justify-between items-center panel panel-texture p-4">
+          <span>{item} – бесплатно</span>
+          <Button onClick={() => window.open('#', '_blank')}>Получить</Button>
         </div>
       ))}
     </div>
@@ -317,7 +322,7 @@ function Shop() {
 function Profile() {
   const friends = ["@astro1", "@astro2", "@astro3"];
   return (
-    <div className="text-white space-y-4">
+    <div className="text-white space-y-4 panel panel-texture p-4">
       <div className="flex items-center gap-4">
         <img src="https://via.placeholder.com/80" alt="avatar" className="w-16 h-16 rounded-full" />
         <div>
@@ -345,15 +350,15 @@ function Profile() {
 
 function About() {
   return (
-    <p className="text-white text-center">
+    <div className="text-white text-center panel panel-texture p-4">
       Прыгайте всё выше, собирайте бонусы и зарабатывайте TON — и всё это не выходя из Telegram. Веселитесь, соревнуйтесь с друзьями и прокачивайте себя!
-    </p>
+    </div>
   );
 }
 
 function Settings() {
   return (
-    <div className="space-y-4 text-white">
+    <div className="space-y-4 text-white panel panel-texture p-4">
       <div>
         <label className="block mb-1">Громкость музыки</label>
         <input type="range" className="w-full" />
@@ -376,6 +381,20 @@ function Settings() {
       <div className="text-center">
         <a href="https://t.me/" target="_blank" rel="noreferrer" className="inline-block bg-blue-600 px-4 py-2 rounded-md">Обратная связь</a>
       </div>
+    </div>
+  );
+}
+
+function Referral() {
+  return (
+    <div className="text-white space-y-4 text-center panel panel-texture p-4">
+      <p>Приглашайте друзей по ссылке и получайте бонусы TON.</p>
+      <Button
+        onClick={() => navigator.clipboard.writeText('https://t.me/your_bot')}
+        className="mx-auto"
+      >
+        Скопировать ссылку
+      </Button>
     </div>
   );
 }
