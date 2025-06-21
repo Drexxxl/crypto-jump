@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 import { Home, List, Trophy, Grid, User } from "lucide-react";
 import { motion } from "framer-motion";
 
