@@ -7,12 +7,20 @@ const gameOverEl = document.getElementById('gameOver');
 const scoreEl = document.getElementById('score');
 const recordEl = document.getElementById('record');
 const shieldUI = document.getElementById('shieldUI');
-const leftBtn = document.getElementById('leftBtn');
-const rightBtn = document.getElementById('rightBtn');
 const loadingEl = document.getElementById('loading');
 
-canvas.width = 360;
-canvas.height = 640;
+const BASE_WIDTH = 360;
+const BASE_HEIGHT = 640;
+const maxGapY = 150;
+let scale = 1;
+
+function resizeGame() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  scale = canvas.width / BASE_WIDTH;
+}
+
+resizeGame();
 
 let gameState = 'start';
 let highscore = parseInt(localStorage.getItem('highscore') || '0');
@@ -34,6 +42,10 @@ let score = 0;
 let keys = { left: false, right: false };
 let platformGap = 60;
 let hasShield = false;
+let rocketActive = false;
+let shieldStartTime = 0;
+let rocketStartTime = 0;
+const boostDuration = 7000; // ms
 const stars = [];
 
 function initStars() {
@@ -68,11 +80,13 @@ function createPlatform(y) {
     else boost = 'shield';
   }
 
+  const width = 60 * scale;
+  const height = 10 * scale;
   return {
-    x: Math.random() * (canvas.width - 60),
+    x: Math.random() * (canvas.width - width),
     y,
-    width: 60,
-    height: 10,
+    width,
+    height,
     type,
     boost,
     used: false,
@@ -82,27 +96,34 @@ function createPlatform(y) {
 }
 
 function resetGame() {
-  player.x = 160;
-  player.y = 500;
+  resizeGame();
+  player.width = 30 * scale;
+  player.height = 30 * scale;
+  player.jump = -6 * scale;
+  player.x = canvas.width / 2 - player.width / 2;
+  player.y = canvas.height - 140 * scale;
   player.dy = 0;
   platforms = [];
   score = 0;
-  platformGap = 60;
+  platformGap = 60 * scale;
   hasShield = false;
+  rocketActive = false;
+  shieldStartTime = 0;
+  rocketStartTime = 0;
   initStars();
   // starting platform at the bottom under the player
   platforms.push({
-    x: player.x - 15,
-    y: canvas.height - 50,
-    width: 60,
-    height: 10,
+    x: player.x - 15 * scale,
+    y: canvas.height - 50 * scale,
+    width: 60 * scale,
+    height: 10 * scale,
     type: 'normal',
     boost: null,
     used: false,
     dx: 0
   });
   for (let i = 1; i < 10; i++) {
-    platforms.push(createPlatform(canvas.height - 50 - i * platformGap));
+    platforms.push(createPlatform(canvas.height - 50 * scale - i * platformGap));
   }
   scoreEl.textContent = 'Score: 0';
   shieldUI.style.display = 'none';
@@ -117,24 +138,25 @@ function update() {
     if (s.y > canvas.height) s.y = 0;
   });
 
-  player.gravity = 0.2 + diff * 0.2;
+  player.gravity = (0.2 + diff * 0.2) * scale;
   player.dy += player.gravity;
   player.y += player.dy;
 
-  if (keys.left) player.x -= 4;
-  if (keys.right) player.x += 4;
+  if (keys.left) player.x -= 4 * scale;
+  if (keys.right) player.x += 4 * scale;
 
   if (player.x < 0) player.x = 0;
   if (player.x + player.width > canvas.width) {
     player.x = canvas.width - player.width;
   }
 
-  if (player.y < 300) {
-    let dy = (300 - player.y) * scrollSpeed;
-    player.y = 300;
+  const scrollPoint = 300 * scale;
+  if (player.y < scrollPoint) {
+    let dy = (scrollPoint - player.y) * scrollSpeed;
+    player.y = scrollPoint;
     platforms.forEach(p => (p.y += dy));
     score += Math.floor(dy);
-    platformGap = 60 + diff * 40;
+    platformGap = Math.min(60 + diff * 40, maxGapY) * scale;
   }
 
   let minY = Math.min(...platforms.map(p => p.y));
@@ -158,9 +180,16 @@ function update() {
       } else {
         let bounce = player.jump;
         if (p.boost === 'spring') bounce = player.jump * 1.5;
-        if (p.boost === 'rocket') bounce = player.jump * 4;
+        if (p.boost === 'rocket') {
+          rocketActive = true;
+          rocketStartTime = Date.now();
+        }
+        if (rocketActive) bounce = player.jump * 4;
         player.dy = bounce;
-        if (p.boost === 'shield') hasShield = true;
+        if (p.boost === 'shield') {
+          hasShield = true;
+          shieldStartTime = Date.now();
+        }
       }
       p.boost = null;
       if (p.type === 'break') p.used = true;
@@ -185,10 +214,21 @@ function update() {
   if (player.y > canvas.height) {
     if (hasShield) {
       hasShield = false;
-      player.y = canvas.height - 60;
+      player.y = canvas.height - 60 * scale;
       player.dy = player.jump;
     } else {
       endGame();
+    }
+  }
+
+  if (hasShield && Date.now() - shieldStartTime > boostDuration) {
+    hasShield = false;
+  }
+  if (rocketActive) {
+    if (Date.now() - rocketStartTime > boostDuration) {
+      rocketActive = false;
+    } else {
+      player.dy = player.jump * 4;
     }
   }
 
@@ -341,10 +381,6 @@ document.addEventListener('keyup', e => {
   else if (e.key === 'ArrowRight') keys.right = false;
 });
 
-leftBtn.addEventListener('touchstart', () => (keys.left = true));
-leftBtn.addEventListener('touchend', () => (keys.left = false));
-rightBtn.addEventListener('touchstart', () => (keys.right = true));
-rightBtn.addEventListener('touchend', () => (keys.right = false));
 
 window.addEventListener('deviceorientation', event => {
   if (event.gamma) {
@@ -361,6 +397,11 @@ window.addEventListener('load', () => {
   setTimeout(() => {
     loadingEl.style.display = 'none';
   }, 1000);
+});
+
+window.addEventListener('resize', () => {
+  resizeGame();
+  resetGame();
 });
 
 resetGame();
