@@ -1,8 +1,0 @@
-html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:'Orbitron',sans-serif}
-#gameCanvas{display:block;width:100vw;height:100vh;background:transparent}
-#ui{position:fixed;top:10px;left:0;right:0;display:flex;justify-content:space-between;padding:0 10px;pointer-events:none;z-index:2}
-#ui span{background:var(--hud-bg);padding:4px 8px;border-radius:8px;font-size:14px}
-#startBtn,#restartBtn{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:10px 20px;font-size:18px;background:var(--teal);color:#000;border:none;border-radius:8px;cursor:pointer;z-index:3}
-#restartBtn{display:none}
-#gameOver{position:fixed;top:40%;left:50%;transform:translateX(-50%);font-size:24px;display:none;z-index:3}
-#loading{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#000;color:var(--gold);font-size:20px;z-index:4}
