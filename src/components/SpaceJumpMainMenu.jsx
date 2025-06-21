@@ -54,24 +54,45 @@ export default function SpaceJumpMainMenu() {
 
       {/* Основное меню, затемняется и размывается при открытии окон */}
       <div className={`${screen !== "menu" ? "filter blur-sm brightness-50 pointer-events-none" : ""} relative flex flex-col items-center grow w-full`}>
-        <div className="absolute top-4 md:top-8 left-0 right-0 z-10 flex justify-between items-center px-4 md:px-8">
-          <button
-            onClick={() => setScreen("ton")}
-            className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform"
-            aria-label="О проекте"
-          >
-            <img src="https://cdn-icons-png.flaticon.com/512/3791/3791513.png" alt="TON" className="w-6 h-6" />
-          </button>
-          <h1 className="text-white text-4xl md:text-5xl font-black tracking-widest">
-            SpaceJump
-          </h1>
-          <button
-            onClick={() => setScreen("settings")}
-            className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform"
-            aria-label="Настройки"
-          >
-            <img src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png" alt="Settings" className="w-6 h-6" />
-          </button>
+        <div className="absolute top-4 md:top-8 left-0 right-0 z-10 flex flex-col items-center gap-2 px-4 md:px-8">
+          <div className="hidden md:flex justify-between items-center w-full">
+            <button
+              onClick={() => setScreen("ton")}
+              className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform"
+              aria-label="О проекте"
+            >
+              <img src="https://cdn-icons-png.flaticon.com/512/3791/3791513.png" alt="TON" className="w-6 h-6" />
+            </button>
+            <h1 className="text-white text-4xl md:text-5xl font-black tracking-widest">
+              SpaceJump
+            </h1>
+            <button
+              onClick={() => setScreen("settings")}
+              className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform"
+              aria-label="Настройки"
+            >
+              <img src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png" alt="Settings" className="w-6 h-6" />
+            </button>
+          </div>
+          <div className="md:hidden flex flex-col items-center gap-2 w-full">
+            <h1 className="text-white text-4xl font-black tracking-widest">SpaceJump</h1>
+            <div className="flex justify-between w-full">
+              <button
+                onClick={() => setScreen("ton")}
+                className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform"
+                aria-label="О проекте"
+              >
+                <img src="https://cdn-icons-png.flaticon.com/512/3791/3791513.png" alt="TON" className="w-6 h-6" />
+              </button>
+              <button
+                onClick={() => setScreen("settings")}
+                className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform"
+                aria-label="Настройки"
+              >
+                <img src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png" alt="Settings" className="w-6 h-6" />
+              </button>
+            </div>
+          </div>
         </div>
 
         <AnimatePresence>
@@ -90,9 +111,9 @@ export default function SpaceJumpMainMenu() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setScreen("play")}
-                  className="bg-white text-black w-40 h-40 sm:w-48 sm:h-48 md:w-64 md:h-64 text-5xl md:text-6xl font-bold rounded-full shadow-2xl flex items-center justify-center neon-button"
+                  className="bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 text-white w-40 h-40 sm:w-48 sm:h-48 md:w-64 md:h-64 text-5xl md:text-6xl font-bold rounded-full shadow-2xl flex items-center justify-center neon-button"
                 >
-                  ▶
+                  JUMP
                 </motion.button>
               </motion.div>
 
@@ -174,11 +195,11 @@ export default function SpaceJumpMainMenu() {
         }
 
         .neon-button {
-          box-shadow: 0 0 20px #00f6ff, 0 0 40px #00f6ff, 0 0 60px #00f6ff;
+          box-shadow: 0 0 20px #8b5cf6, 0 0 40px #3b82f6, 0 0 60px #06b6d4;
           transition: box-shadow 0.3s ease;
         }
         .neon-button:hover {
-          box-shadow: 0 0 30px #00f6ff, 0 0 60px #00f6ff, 0 0 90px #00f6ff;
+          box-shadow: 0 0 30px #8b5cf6, 0 0 60px #3b82f6, 0 0 90px #06b6d4;
         }
         .neon-glow {
           box-shadow: 0 0 10px #00f6ff, 0 0 20px #00f6ff;
