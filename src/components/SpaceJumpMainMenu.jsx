@@ -25,6 +25,7 @@ export default function SpaceJumpMainMenu() {
     settings: "Настройки",
     free: "Бесплатная игра",
     survival: "Выживание",
+    hardcore: "Хардкор",
   };
 
   const ScreenContent = () => {
@@ -34,6 +35,7 @@ export default function SpaceJumpMainMenu() {
           <GameModeMenu
             onFree={() => setScreen("free")}
             onSurvival={() => setScreen("survival")}
+            onHardcore={() => setScreen("hardcore")}
           />
         );
       case "list":
@@ -48,6 +50,8 @@ export default function SpaceJumpMainMenu() {
         return <DoodleJumpGame onExit={() => setScreen("menu")} />;
       case "survival":
         return <DoodleJumpGame mode="survival" onExit={() => setScreen("menu")} />;
+      case "hardcore":
+        return <DoodleJumpGame mode="hardcore" onExit={() => setScreen("menu")} />;
       case "ton":
         return <About />;
       case "settings":
@@ -228,7 +232,7 @@ function IconButton({ icon, onClick, ariaLabel }) {
   );
 }
 
-function GameModeMenu({ onFree, onSurvival }) {
+function GameModeMenu({ onFree, onSurvival, onHardcore }) {
   return (
     <div className="space-y-4 text-white">
       <div
@@ -242,6 +246,12 @@ function GameModeMenu({ onFree, onSurvival }) {
         className="flex justify-between items-center bg-white/10 p-4 rounded-md cursor-pointer hover:bg-white/20"
       >
         <span>Выживание – бесплатно</span>
+      </div>
+      <div
+        onClick={onHardcore}
+        className="flex justify-between items-center bg-white/10 p-4 rounded-md cursor-pointer hover:bg-white/20"
+      >
+        <span>Хардкор – 1 жизнь</span>
       </div>
     </div>
   );

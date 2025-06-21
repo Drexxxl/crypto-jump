@@ -9,16 +9,19 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
   const maxHeightRef = useRef(0);
   const [tons, setTons] = useState(0);
   const shieldRef = useRef(0);
+  const nitroRef = useRef(0);
   const [showHint, setShowHint] = useState(true);
   const [paused, setPaused] = useState(false);
   const pausedRef = useRef(false);
   const [countdown, setCountdown] = useState(3);
   const countdownRef = useRef(3);
-  const [lives, setLives] = useState(3);
-  const livesRef = useRef(3);
+  const initialLives = mode === "hardcore" ? 1 : 3;
+  const [lives, setLives] = useState(initialLives);
+  const livesRef = useRef(initialLives);
   const [survivalTime, setSurvivalTime] = useState(0);
   const startTimeRef = useRef(performance.now());
   const pauseStartRef = useRef(null);
+  const [nitroActive, setNitroActive] = useState(false);
 
   const coinSound = useRef(null);
 
@@ -64,13 +67,21 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
     setRestartKey((k) => k + 1);
     setTons(0);
     shieldRef.current = 0;
-    setLives(3);
-    livesRef.current = 3;
+    nitroRef.current = 0;
+    setLives(initialLives);
+    livesRef.current = initialLives;
     setSurvivalTime(0);
     startTimeRef.current = performance.now();
     pauseStartRef.current = null;
     startCountdown();
   };
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setNitroActive(nitroRef.current > performance.now());
+    }, 100);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     const onPauseKey = (e) => {
@@ -101,6 +112,7 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
       x: canvas.width / 2 - 20,
       y: canvas.height - 80,
       vy: -8,
+      vx: 0,
       w: 40,
       h: 40,
     };
@@ -122,7 +134,11 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
         coins.push({ x: x + pW / 2, y: y - 15, r: 6, phase: Math.random() * Math.PI * 2, platform: p });
       }
       if (Math.random() < 0.1) {
-        const type = Math.random() < 0.5 ? "spring" : "shield";
+        const r = Math.random();
+        let type = "spring";
+        if (r < 0.33) type = "spring";
+        else if (r < 0.66) type = "shield";
+        else type = "nitro";
         boosts.push({ x: x + pW / 2, y: y - 25, type, platform: p });
       }
     }
@@ -174,13 +190,20 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
       const difficulty =
         mode === "survival"
           ? 1 + survivalTime / 30
+          : mode === "hardcore"
+          ? 1.5 + maxHeightRef.current / 1000
           : 1 + maxHeightRef.current / 2000;
-      const speed = baseSpeed * difficulty;
+
+      const nitroBoost = nitroRef.current > performance.now() ? 1.5 : 1;
+      const speed = baseSpeed * difficulty * nitroBoost;
       const gravity = baseGravity * difficulty;
       player.vy += gravity;
       player.y += player.vy;
-      if (keys["ArrowLeft"] || touchDir === -1) player.x -= speed;
-      if (keys["ArrowRight"] || touchDir === 1) player.x += speed;
+
+      if (keys["ArrowLeft"] || touchDir === -1) player.vx -= 0.5 * difficulty;
+      if (keys["ArrowRight"] || touchDir === 1) player.vx += 0.5 * difficulty;
+      player.vx *= 0.9;
+      player.x += player.vx * nitroBoost;
       if (player.x < -player.w) player.x = canvas.width;
       if (player.x > canvas.width) player.x = -player.w;
 
@@ -221,7 +244,11 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
               coins.push({ x: p.x + pW / 2, y: p.y - 15, r: 6, phase: 0, platform: p });
             }
             if (Math.random() < 0.1) {
-              const type = Math.random() < 0.5 ? "spring" : "shield";
+              const r = Math.random();
+              let type = "spring";
+              if (r < 0.33) type = "spring";
+              else if (r < 0.66) type = "shield";
+              else type = "nitro";
               boosts.push({ x: p.x + pW / 2, y: p.y - 25, type, platform: p });
             }
           }
@@ -254,10 +281,14 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const drawRocket = (x, y, w, h, vy) => {
+        const nitroOn = nitroRef.current > performance.now();
         ctx.save();
         ctx.translate(x, y);
         ctx.scale(w / 40, h / 40);
-        ctx.fillStyle = "#fff";
+        const bodyGrad = ctx.createLinearGradient(20, 0, 20, 40);
+        bodyGrad.addColorStop(0, "#fff");
+        bodyGrad.addColorStop(1, "#ccc");
+        ctx.fillStyle = bodyGrad;
         ctx.beginPath();
         ctx.moveTo(20, 0);
         ctx.lineTo(30, 10);
@@ -269,20 +300,20 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
         ctx.fill();
         ctx.fillStyle = "#f87171";
         ctx.beginPath();
-        ctx.moveTo(20, -5);
+        ctx.moveTo(20, -6);
         ctx.lineTo(32, 10);
         ctx.lineTo(8, 10);
         ctx.closePath();
         ctx.fill();
         ctx.fillStyle = "#60a5fa";
-        ctx.fillRect(5, 28, 8, 8);
-        ctx.fillRect(27, 28, 8, 8);
+        ctx.fillRect(12, 18, 16, 8);
         if (vy < 0) {
-          ctx.fillStyle = "orange";
+          const flame = nitroOn ? 12 : 8;
+          ctx.fillStyle = nitroOn ? "#fbbf24" : "orange";
           ctx.beginPath();
           ctx.moveTo(20, 40);
-          ctx.lineTo(15, 48);
-          ctx.lineTo(25, 48);
+          ctx.lineTo(15, 40 + flame);
+          ctx.lineTo(25, 40 + flame);
           ctx.closePath();
           ctx.fill();
         }
@@ -360,12 +391,20 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
           ctx.fillStyle = "#4ade80";
           ctx.fillRect(b.x - 10, b.y - 5, 20, 10);
           ctx.fillRect(b.x - 4, b.y - 15, 8, 10);
-        } else {
+        } else if (b.type === "shield") {
           ctx.strokeStyle = "#0ff";
           ctx.lineWidth = 2;
           ctx.beginPath();
           ctx.arc(b.x, b.y, 10, 0, Math.PI * 2);
           ctx.stroke();
+        } else {
+          ctx.fillStyle = "#facc15";
+          ctx.beginPath();
+          ctx.moveTo(b.x, b.y - 8);
+          ctx.lineTo(b.x + 8, b.y + 8);
+          ctx.lineTo(b.x - 8, b.y + 8);
+          ctx.closePath();
+          ctx.fill();
         }
       });
 
@@ -380,8 +419,10 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
           boosts.splice(i, 1);
           if (b.type === "spring") {
             player.vy = jumpVy * 1.5;
-          } else {
+          } else if (b.type === "shield") {
             shieldRef.current = performance.now() + 2000 + Math.random() * 4000;
+          } else {
+            nitroRef.current = performance.now() + 3000;
           }
         }
       });
@@ -391,6 +432,11 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
         mode === "survival"
           ? `Time: ${survivalTime}s TON: ${tons}`
           : `Score: ${heightScore + score} TON: ${tons}`;
+      if (mode === "hardcore") {
+        ctx.fillStyle = "#f87171";
+        ctx.fillText("HC", 10, 40);
+        ctx.fillStyle = "#fff";
+      }
       ctx.fillText(text, 10, 20);
 
       animId = requestAnimationFrame(loop);
@@ -450,13 +496,18 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
             <span>❤️</span>
             <span className="font-semibold">{lives}</span>
           </div>
-          <div className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded">
+        <div className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" className="w-4 h-4 fill-current text-cyan-400">
               <circle cx="32" cy="32" r="30" fill="#0098ea" />
               <path fill="#fff" d="M32 16L16 48h32L32 16z" />
             </svg>
             <span className="font-semibold">{tons}</span>
           </div>
+          {nitroActive && (
+            <div className="flex items-center gap-1 bg-yellow-500/20 px-2 py-1 rounded">
+              <span>⚡</span>
+            </div>
+          )}
         </div>
       </div>
 
