@@ -10,10 +10,22 @@ SpaceJump is a simplified Doodle Jump style game intended to be used as a Telegr
 - Rocket shows a flame when moving upward
 - A floor at the start so the rocket doesn't immediately fall
 - Scrolling star background
+- Optional background music and sound effects
+- Support for sprite images for the rocket and platforms
 
 ## Running Locally
 
 Simply open `index.html` in a browser to play the game locally.
+
+The game expects audio and image assets inside an `assets` directory:
+
+- `assets/rocket.png` – sprite for the rocket
+- `assets/platform.png` – sprite for platforms
+- `assets/jump.wav` – jump sound effect
+- `assets/gameover.wav` – game over sound
+- `assets/music.mp3` – background music
+
+You can replace these with your own files to customize the look and sound.
 
 ## Deploying as a Telegram Web Game
 
