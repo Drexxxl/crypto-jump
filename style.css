@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  text-align: center;
+  background: #000;
+  color: #fff;
+}
+#menu {
+  margin-top: 100px;
+}
+#gameCanvas {
+  background: #000;
+  display: block;
+  margin: 0 auto;
+}
