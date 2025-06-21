@@ -112,3 +112,9 @@ canvas {
   background: #000;
   display: block;
 }
+.scoreboard {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  font-size: 1.2rem;
+}

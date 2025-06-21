@@ -11,15 +11,24 @@ const platformW = 60;
 const platformH = 10;
 const maxPlatforms = 6;
 
+let score = 0;
+let best = parseInt(localStorage.getItem('best')) || 0;
+document.getElementById('best').textContent = `Best: ${best}`;
+
+function createPlatform(y) {
+  return {
+    x: Math.random() * (width - platformW),
+    y,
+    width: platformW,
+    height: platformH,
+    vx: Math.random() < 0.2 ? (Math.random() < 0.5 ? 1 : -1) : 0
+  };
+}
+
 function initPlatforms() {
   const step = height / maxPlatforms;
   for (let i = 0; i < maxPlatforms; i++) {
-    platforms.push({
-      x: Math.random() * (width - platformW),
-      y: height - i * step,
-      width: platformW,
-      height: platformH
-    });
+    platforms.push(createPlatform(height - i * step));
   }
 }
 
@@ -82,6 +91,10 @@ function update() {
   if (rocket.x > width) rocket.x = -rocket.width;
 
   platforms.forEach(p => {
+    if (p.vx) {
+      p.x += p.vx;
+      if (p.x <= 0 || p.x + p.width >= width) p.vx *= -1;
+    }
     if (
       rocket.vy > 0 &&
       rocket.x + rocket.width > p.x &&
@@ -96,22 +109,27 @@ function update() {
   if (rocket.y < height / 2) {
     const diff = height / 2 - rocket.y;
     rocket.y = height / 2;
+    score += Math.floor(diff);
+    document.getElementById('score').textContent = `Score: ${score}`;
     platforms.forEach(p => (p.y += diff));
     if (Math.random() < 0.1) {
-      platforms.push({
-        x: Math.random() * (width - platformW),
-        y: -platformH,
-        width: platformW,
-        height: platformH
-      });
+      platforms.push(createPlatform(-platformH));
     }
     platforms = platforms.filter(p => p.y < height);
   }
 
   if (rocket.y > height) {
-    alert('Game Over');
-    window.location.href = 'index.html';
+    gameOver();
   }
+}
+
+function gameOver() {
+  if (score > best) {
+    best = score;
+    localStorage.setItem('best', best);
+  }
+  alert(`Game Over\nScore: ${score}\nBest: ${best}`);
+  window.location.href = 'index.html';
 }
 
 function loop() {
