@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Home,
   List,
@@ -8,26 +8,41 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "./ui/button";
 
 export default function SpaceJumpMainMenu() {
   const [screen, setScreen] = useState("menu");
 
   const titles = {
-    play: "Игра скоро",
-    home: "Главная",
+    play: "Режим игры",
     list: "Таблица лидеров",
     trophy: "Достижения",
-    grid: "Меню",
+    grid: "Магазин",
     profile: "Профиль",
     ton: "О проекте",
     settings: "Настройки",
   };
 
-  const ScreenContent = ({ title }) => (
-    <div className="flex flex-col items-center justify-center h-full text-center p-4 text-white text-2xl">
-      {title}
-    </div>
-  );
+  const ScreenContent = () => {
+    switch (screen) {
+      case "play":
+        return <GameModeMenu />;
+      case "list":
+        return <Leaderboard />;
+      case "trophy":
+        return <Achievements />;
+      case "grid":
+        return <Shop />;
+      case "profile":
+        return <Profile />;
+      case "ton":
+        return <About />;
+      case "settings":
+        return <Settings />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="relative w-full min-h-screen lg:h-screen bg-black overflow-hidden p-4 md:p-8 flex flex-col items-center max-w-md md:max-w-2xl xl:max-w-none mx-auto">
@@ -89,7 +104,7 @@ export default function SpaceJumpMainMenu() {
                 transition={{ duration: 0.2 }}
                 className="absolute bottom-4 md:bottom-8 w-full flex justify-center gap-6 md:gap-12 z-10 text-white"
               >
-                <IconButton ariaLabel="Главная" icon={<Home />} onClick={() => setScreen("home")}/>
+                <IconButton ariaLabel="Главная" icon={<Home />} onClick={() => setScreen("menu")}/>
                 <IconButton ariaLabel="Лидеры" icon={<List />} onClick={() => setScreen("list")}/>
                 <IconButton ariaLabel="Достижения" icon={<Trophy />} onClick={() => setScreen("trophy")}/>
                 <IconButton ariaLabel="Меню" icon={<Grid />} onClick={() => setScreen("grid")}/>
@@ -124,7 +139,10 @@ export default function SpaceJumpMainMenu() {
               <span className="w-12 h-12" />
             </div>
             <div className="flex grow items-center justify-center z-20">
-              <ScreenContent title={titles[screen]} />
+              <div className="w-full max-w-md">
+                <h2 className="text-center text-white text-2xl mb-4">{titles[screen]}</h2>
+                <ScreenContent />
+              </div>
             </div>
           </motion.div>
         )}
@@ -186,5 +204,145 @@ function IconButton({ icon, onClick, ariaLabel }) {
         {icon}
       </div>
     </button>
+  );
+}
+
+function GameModeMenu() {
+  const modes = [
+    "Free – играть бесплатно",
+    "Выжить – вход 1 TON",
+  ];
+  return (
+    <div className="space-y-4 text-white">
+      {modes.map((m) => (
+        <div key={m} className="flex justify-between items-center bg-white/10 p-4 rounded-md">
+          <span>{m}</span>
+          <span className="text-xs px-2 py-1 bg-yellow-500 text-black rounded">SOON</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Leaderboard() {
+  const players = Array.from({ length: 10 }, (_, i) => ({
+    user: `@player${i + 1}`,
+    level: 10 - i,
+  }));
+  return (
+    <div className="text-white">
+      <table className="w-full mb-4 text-left">
+        <thead>
+          <tr>
+            <th>Игрок</th>
+            <th className="text-right">Уровень</th>
+          </tr>
+        </thead>
+        <tbody>
+          {players.map((p) => (
+            <tr key={p.user} className="border-t border-white/20">
+              <td>{p.user}</td>
+              <td className="text-right">{p.level}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="text-xs text-center">обновлено 5 мин назад</p>
+    </div>
+  );
+}
+
+function Achievements() {
+  return (
+    <div className="text-white text-center">
+      <h3 className="mb-4 text-xl">Ваши достижения</h3>
+      <div className="h-32 border border-dashed border-white/40 rounded-md flex items-center justify-center text-white/50">
+        скоро здесь появятся карточки
+      </div>
+    </div>
+  );
+}
+
+function Shop() {
+  const items = [
+    "Щит 10 сек",
+    "Возрождение",
+    "Нитро 10 сек",
+  ];
+  return (
+    <div className="space-y-4 text-white">
+      {items.map((item) => (
+        <div key={item} className="flex justify-between items-center bg-white/10 p-4 rounded-md">
+          <span>{item} – 0.1 TON</span>
+          <Button onClick={() => window.open('#', '_blank')}>Купить</Button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Profile() {
+  const friends = ["@astro1", "@astro2", "@astro3"];
+  return (
+    <div className="text-white space-y-4">
+      <div className="flex items-center gap-4">
+        <img src="https://via.placeholder.com/80" alt="avatar" className="w-16 h-16 rounded-full" />
+        <div>
+          <p>@username</p>
+          <p className="text-sm text-sky-400">Баланс: 0 TON</p>
+        </div>
+      </div>
+      <div>
+        <p className="mb-1">Лучший уровень</p>
+        <div className="h-2 bg-white/20 rounded">
+          <div className="h-2 bg-blue-500 w-1/2"></div>
+        </div>
+      </div>
+      <div>
+        <p className="mb-1">Друзья</p>
+        <ul className="list-disc list-inside text-sm space-y-1">
+          {friends.map((f) => (
+            <li key={f}>{f}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function About() {
+  return (
+    <p className="text-white text-center">
+      Прыгайте всё выше, собирайте бонусы и зарабатывайте TON — и всё это не выходя из Telegram. Веселитесь, соревнуйтесь с друзьями и прокачивайте себя!
+    </p>
+  );
+}
+
+function Settings() {
+  return (
+    <div className="space-y-4 text-white">
+      <div>
+        <label className="block mb-1">Громкость музыки</label>
+        <input type="range" className="w-full" />
+      </div>
+      <div>
+        <label className="block mb-1">SFX</label>
+        <input type="range" className="w-full" />
+      </div>
+      <div>
+        <label className="block mb-1">Вибро</label>
+        <input type="range" className="w-full" />
+      </div>
+      <div>
+        <label className="block mb-1">Язык</label>
+        <select className="w-full p-2 rounded-md text-black">
+          <option>RU</option>
+          <option>EN</option>
+        </select>
+      </div>
+      <div className="text-center">
+        <a href="https://t.me/" target="_blank" rel="noreferrer" className="inline-block bg-blue-600 px-4 py-2 rounded-md">Обратная связь</a>
+      </div>
+    </div>
   );
 }
