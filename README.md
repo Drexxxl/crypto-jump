@@ -8,6 +8,7 @@ SpaceJump is a simplified Doodle Jump style game intended to be used as a Telegr
 - A rocket character that jumps on platforms
 - Basic Doodle Jump style mechanics (moving left/right, bouncing off platforms)
 - Rocket shows a flame when moving upward
+- A floor at the start so the rocket doesn't immediately fall
 
 ## Running Locally
 
