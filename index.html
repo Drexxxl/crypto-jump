@@ -1,37 +1,35 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpaceJump</title>
+    <title>VOID Jump</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="menu">
-    <div id="stars"></div>
-    <div class="menu-ui">
-        <header>
-            <span class="currency">0</span>
-            <button id="settings" aria-label="Настройки">&#9881;</button>
+<body class="void-theme">
+    <div id="nebula"></div>
+
+    <div class="main-ui">
+        <header class="main-header">
+            <div class="player-info">
+                <span class="player-name">Viessory</span>
+                <span class="player-lvl">ур 4</span>
+            </div>
+            <div class="player-coins">906 ⚪</div>
         </header>
-        <main>
-            <h1>SpaceJump</h1>
-            <p id="bestDisplay"></p>
-            <button id="play">Играть</button>
-        </main>
-        <nav>
-            <a href="#" class="active" aria-label="Главная">🏠</a>
-            <a href="#" aria-label="Цели">🎯</a>
-            <a href="#" aria-label="Достижения">🏆</a>
-            <a href="#" aria-label="Инвентарь">🎒</a>
-            <a href="#" aria-label="Профиль">👤</a>
+
+        <div class="play-button-container">
+            <button id="play-button">▶</button>
+        </div>
+
+        <nav class="main-nav">
+            <button class="nav-btn">Главная</button>
+            <button class="nav-btn">Маркет</button>
+            <button class="nav-btn">Топ</button>
+            <button class="nav-btn">Инвентарь</button>
+            <button class="nav-btn">Профиль</button>
         </nav>
     </div>
-    <script>
-        const best = localStorage.getItem('best');
-        document.getElementById('bestDisplay').textContent = best ? `Лучший результат: ${best}` : '';
-        document.getElementById('play').onclick = function() {
-            window.location.href = 'game.html';
-        };
-    </script>
 </body>
 </html>
