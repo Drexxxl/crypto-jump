@@ -4,36 +4,36 @@ import { motion } from "framer-motion";
 
 export default function SpaceJumpMainMenu() {
   return (
-    <div className="relative w-full h-screen bg-black overflow-hidden p-8">
+    <div className="relative w-full min-h-screen bg-black overflow-hidden p-8 flex flex-col">
       {/* Новый CSS-анимированный звёздный фон */}
       <div className="absolute inset-0 z-0">
         <div className="stars-layer"></div>
       </div>
 
       {/* Верхняя панель */}
-      <div className="absolute top-8 left-0 right-0 z-10 flex justify-between items-center px-8">
+      <div className="absolute top-8 left-0 right-0 z-10 flex justify-between items-center px-4 md:px-8">
         <div className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform">
           <img src="https://cdn-icons-png.flaticon.com/512/3791/3791513.png" alt="TON" className="w-6 h-6" />
         </div>
-        <h1 className="text-white text-5xl font-black tracking-widest font-['Orbitron'],sans-serif">SpaceJump</h1>
+        <h1 className="text-white text-4xl md:text-5xl font-black tracking-widest">SpaceJump</h1>
         <div className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform">
           <img src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png" alt="Settings" className="w-6 h-6" />
         </div>
       </div>
 
       {/* Главная кнопка Играть */}
-      <div className="flex justify-center items-center h-full z-10 relative">
+      <div className="flex grow justify-center items-center z-10 relative">
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className="bg-white text-black w-64 h-64 text-6xl font-bold rounded-full shadow-2xl flex items-center justify-center neon-button"
+          className="bg-white text-black w-48 h-48 md:w-64 md:h-64 text-5xl md:text-6xl font-bold rounded-full shadow-2xl flex items-center justify-center neon-button"
         >
           ▶
         </motion.button>
       </div>
 
       {/* Нижнее меню */}
-      <div className="absolute bottom-8 w-full flex justify-center gap-12 z-10 text-white">
+      <div className="absolute bottom-8 w-full flex justify-center gap-6 md:gap-12 z-10 text-white">
         <IconButton icon={<Home />} />
         <IconButton icon={<List />} />
         <IconButton icon={<Trophy />} />
