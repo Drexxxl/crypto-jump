@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 
-export default function DoodleJumpGame({ onExit, mode = "free" }) {
+export default function DoodleJumpGame({ onExit, mode = "free", difficulty = "normal" }) {
   const canvasRef = useRef(null);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
@@ -22,6 +22,13 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
   const startTimeRef = useRef(performance.now());
   const pauseStartRef = useRef(null);
   const [nitroActive, setNitroActive] = useState(false);
+
+  const DIFFICULTY_SETTINGS = {
+    easy: { platformCount: 14, speed: 0.9, breakableChance: 0.05 },
+    normal: { platformCount: 10, speed: 1, breakableChance: 0.1 },
+    hard: { platformCount: 8, speed: 1.2, breakableChance: 0.2 },
+  };
+  const diffSettings = DIFFICULTY_SETTINGS[difficulty] || DIFFICULTY_SETTINGS.normal;
 
   const coinSound = useRef(null);
 
@@ -122,13 +129,14 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
     const boosts = [];
     const pW = 60;
     const pH = 10;
-    const count = 10;
+    const count = diffSettings.platformCount;
     for (let i = 0; i < count; i++) {
       const x = Math.random() * (canvas.width - pW);
       const y = canvas.height - i * 80;
       const moving = Math.random() < 0.3;
       const vx = moving ? (Math.random() < 0.5 ? -1 : 1) * 2 : 0;
-      const p = { x, y, vx, moving };
+      const type = Math.random() < diffSettings.breakableChance ? "breakable" : "normal";
+      const p = { x, y, vx, moving, type };
       platforms.push(p);
       if (Math.random() < 0.5) {
         coins.push({ x: x + pW / 2, y: y - 15, r: 6, phase: Math.random() * Math.PI * 2, platform: p });
@@ -176,9 +184,9 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
     let animId;
 
     startCountdown();
-    const baseSpeed = 5;
+    const baseSpeed = 5 * diffSettings.speed;
     const jumpVy = -8;
-    const baseGravity = 0.2;
+    const baseGravity = 0.2 * diffSettings.speed;
     const loop = () => {
       if (pausedRef.current || countdownRef.current !== null) {
         animId = requestAnimationFrame(loop);
@@ -187,7 +195,7 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
       if (mode === "survival") {
         setSurvivalTime(Math.floor((performance.now() - startTimeRef.current) / 1000));
       }
-      const difficulty =
+      const progress =
         mode === "survival"
           ? 1 + survivalTime / 30
           : mode === "hardcore"
@@ -195,27 +203,28 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
           : 1 + maxHeightRef.current / 2000;
 
       const nitroBoost = nitroRef.current > performance.now() ? 1.5 : 1;
-      const speed = baseSpeed * difficulty * nitroBoost;
-      const gravity = baseGravity * difficulty;
+      const speed = baseSpeed * progress * nitroBoost;
+      const gravity = baseGravity * progress;
       player.vy += gravity;
       player.y += player.vy;
 
-      if (keys["ArrowLeft"] || touchDir === -1) player.vx -= 0.5 * difficulty;
-      if (keys["ArrowRight"] || touchDir === 1) player.vx += 0.5 * difficulty;
+      if (keys["ArrowLeft"] || touchDir === -1) player.vx -= 0.5 * progress;
+      if (keys["ArrowRight"] || touchDir === 1) player.vx += 0.5 * progress;
       player.vx *= 0.9;
       player.x += player.vx * nitroBoost;
       if (player.x < -player.w) player.x = canvas.width;
       if (player.x > canvas.width) player.x = -player.w;
 
-      platforms.forEach((p) => {
+      for (let p of platforms) {
         if (p.moving) {
-          p.x += p.vx * difficulty;
+          p.x += p.vx * progress;
           if (p.x < 0 || p.x > canvas.width - pW) p.vx *= -1;
         }
-      });
+      }
 
       if (player.vy > 0) {
-        platforms.forEach((p) => {
+        for (let i = 0; i < platforms.length; i++) {
+          const p = platforms[i];
           if (
             player.x + player.w > p.x &&
             player.x < p.x + pW &&
@@ -224,8 +233,12 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
             player.vy > 0
           ) {
             player.vy = jumpVy;
+            if (p.type === 'breakable' && !p.floor) {
+              platforms.splice(i, 1);
+              i--;
+            }
           }
-        });
+        }
       }
 
       if (player.y < canvas.height / 2) {
@@ -240,6 +253,7 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
             p.x = Math.random() * (canvas.width - pW);
             p.moving = Math.random() < 0.3;
             p.vx = p.moving ? (Math.random() < 0.5 ? -1 : 1) * 2 : 0;
+            p.type = Math.random() < diffSettings.breakableChance ? 'breakable' : 'normal';
             if (Math.random() < 0.5) {
               coins.push({ x: p.x + pW / 2, y: p.y - 15, r: 6, phase: 0, platform: p });
             }
@@ -344,11 +358,18 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
         ctx.arc(player.x + player.w / 2, player.y + player.h / 2, player.w, 0, Math.PI * 2);
         ctx.stroke();
       }
-      const grad = ctx.createLinearGradient(0, 0, 0, pH);
-      grad.addColorStop(0, "#4ade80");
-      grad.addColorStop(1, "#22d3ee");
-      ctx.fillStyle = grad;
-      platforms.forEach((p) => drawRoundedRect(p.x, p.y, pW, pH, 4));
+      platforms.forEach((p) => {
+        let grad = ctx.createLinearGradient(0, 0, 0, pH);
+        if (p.type === 'breakable') {
+          grad.addColorStop(0, '#f87171');
+          grad.addColorStop(1, '#ef4444');
+        } else {
+          grad.addColorStop(0, '#4ade80');
+          grad.addColorStop(1, '#22d3ee');
+        }
+        ctx.fillStyle = grad;
+        drawRoundedRect(p.x, p.y, pW, pH, 4);
+      });
 
       // coins
       coins.forEach((c) => {
@@ -495,6 +516,12 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
           <div className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded">
             <span>❤️</span>
             <span className="font-semibold">{lives}</span>
+          </div>
+          <div className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded">
+            <span>Lvl</span>
+            <span className="font-semibold">
+              {difficulty === 'easy' ? '1' : difficulty === 'hard' ? '3' : '2'}
+            </span>
           </div>
         <div className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" className="w-4 h-4 fill-current text-cyan-400">
