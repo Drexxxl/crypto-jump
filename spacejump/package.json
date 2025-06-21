@@ -2,9 +2,10 @@
   "name": "spacejump",
   "version": "1.0.0",
   "description": "SpaceJump Telegram Mini App",
-  "main": "src/main.js",
+  "main": "public/src/main.js",
   "scripts": {
-    "start": "parcel public/index.html --open"
+    "start": "parcel public/index.html --open",
+    "build": "parcel build public/index.html"
   },
   "dependencies": {
     "phaser": "^3.60.0"

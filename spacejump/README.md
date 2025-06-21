@@ -14,3 +14,12 @@ npm start
 ```
 
 This starts Parcel to serve `public/index.html`.
+
+To create a static build, run:
+
+```bash
+npm run build
+```
+
+Host the contents of the generated `dist` folder. All assets and scripts
+are referenced using relative paths, preventing 404 errors on static hosts.
