@@ -207,7 +207,7 @@ function draw() {
     }
   });
   // draw rocket
-  if (rocketImg.complete) {
+  if (rocketImg.complete && rocketImg.naturalWidth !== 0) {
     ctx.drawImage(rocketImg, rocket.x, rocket.y, rocket.width, rocket.height);
   } else {
     ctx.fillStyle = '#fff';
@@ -233,13 +233,13 @@ startButton.addEventListener('click', () => {
   scoreboard.style.display = 'block';
   init();
   if (music.paused) {
-    music.play();
+    music.play().catch(() => {});
   }
 });
 
 musicToggle.addEventListener('click', () => {
   if (music.paused) {
-    music.play();
+    music.play().catch(() => {});
     musicToggle.textContent = 'Music: On';
   } else {
     music.pause();
