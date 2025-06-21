@@ -15,6 +15,7 @@
         </header>
         <main>
             <h1>SpaceJump</h1>
+            <p id="bestDisplay"></p>
             <button id="play">Играть</button>
         </main>
         <nav>
@@ -26,6 +27,8 @@
         </nav>
     </div>
     <script>
+        const best = localStorage.getItem('best');
+        document.getElementById('bestDisplay').textContent = best ? `Лучший результат: ${best}` : '';
         document.getElementById('play').onclick = function() {
             window.location.href = 'game.html';
         };

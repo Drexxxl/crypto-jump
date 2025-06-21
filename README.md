@@ -1,13 +1,21 @@
 # SpaceJump
 
-SpaceJump is a simple arcade game inspired by Doodle Jump. This repository contains a minimal version that can be deployed as a Telegram mini app or as a static site on any hosting service.
+SpaceJump is a small arcade written in pure JavaScript. It is inspired by the classic Doodle Jump but has a futuristic look thanks to the starry background and Orbitron font.
 
-The UI has been polished with a starry background, animated rocket and Orbitron font to give the game a more futuristic look.
+
+## Features
+
+- Moving and breakable platforms that increase the challenge
+- Difficulty scales as you climb higher
+- Keyboard and touch controls
+- Best score is saved in `localStorage`
 
 ## Running locally
 
-Open `index.html` in a browser to see the main menu. Click **Играть** to start the game.
+Open `index.html` in any modern browser. Press **Играть** to launch the game.
 
 ## Deploying
 
-Any static hosting works. For Vercel, create a new project from this repository and choose the **Static** preset. No build step is required.
+Any static hosting service will do. For example, on Vercel create a new project from this repository and choose the **Static** preset. No build step is required.
+
+A live demo can be hosted at `https://example.com` (replace with your link).
