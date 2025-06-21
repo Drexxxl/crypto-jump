@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Telegram Doodle Jump</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="loading">🚀 Launching…</div>
+    <div id="ui">
+      <span id="score">Score: 0</span>
+      <span id="record">Record: 0</span>
+      <span id="shieldUI" style="display:none">Shield!</span>
+    </div>
+  <button id="startBtn">Start</button>
+  <button id="restartBtn">Restart</button>
+  <div id="gameOver">Game Over!</div>
+  <canvas id="gameCanvas"></canvas>
+  <script src="telegram.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
