@@ -17,5 +17,16 @@
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.Telegram && Telegram.WebApp) {
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand();
+      } else if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    });
+  </script>
 </body>
 </html>
