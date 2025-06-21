@@ -18,6 +18,8 @@ import DoodleJumpGame from "./game/DoodleJumpGame";
 
 export default function SpaceJumpMainMenu() {
   const [screen, setScreen] = useState("menu");
+  const [gameMode, setGameMode] = useState(null);
+  const [difficulty, setDifficulty] = useState("easy");
 
 
   const titles = {
@@ -32,6 +34,8 @@ export default function SpaceJumpMainMenu() {
     free: "Бесплатная игра",
     survival: "Выживание",
     hardcore: "Хардкор",
+    difficulty: "Сложность",
+    game: "Игра",
   };
 
   const ScreenContent = () => {
@@ -39,9 +43,28 @@ export default function SpaceJumpMainMenu() {
       case "play":
         return (
           <GameModeMenu
-            onFree={() => setScreen("free")}
-            onSurvival={() => setScreen("survival")}
-            onHardcore={() => setScreen("hardcore")}
+            onSelect={(m) => {
+              setGameMode(m);
+              setScreen("difficulty");
+            }}
+          />
+        );
+      case "difficulty":
+        return (
+          <DifficultyMenu
+            onSelect={(d) => {
+              setDifficulty(d);
+              setScreen("game");
+            }}
+            onBack={() => setScreen("play")}
+          />
+        );
+      case "game":
+        return (
+          <DoodleJumpGame
+            mode={gameMode || "free"}
+            difficulty={difficulty}
+            onExit={() => setScreen("menu")}
           />
         );
       case "list":
@@ -54,12 +77,6 @@ export default function SpaceJumpMainMenu() {
         return <Profile />;
       case "referral":
         return <Referral />;
-      case "free":
-        return <DoodleJumpGame onExit={() => setScreen("menu")} />;
-      case "survival":
-        return <DoodleJumpGame mode="survival" onExit={() => setScreen("menu")} />;
-      case "hardcore":
-        return <DoodleJumpGame mode="hardcore" onExit={() => setScreen("menu")} />;
       case "ton":
         return <About />;
       case "settings":
@@ -171,12 +188,12 @@ export default function SpaceJumpMainMenu() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className={`absolute inset-0 z-20 flex flex-col ${
-              screen === "free" || screen === "survival"
+              screen === "game"
                 ? "bg-black"
                 : "bg-black/70 backdrop-blur-lg"
             }`}
           >
-            {screen !== "free" && screen !== "survival" && (
+            {screen !== "game" && (
               <div className="flex justify-between items-center px-4 md:px-8 pt-4 md:pt-8">
                 <button
                   onClick={() => setScreen("menu")}
@@ -192,8 +209,8 @@ export default function SpaceJumpMainMenu() {
               </div>
             )}
             <div className="flex grow items-center justify-center z-20">
-              <div className={`w-full ${screen === "free" || screen === "survival" ? "h-full" : "max-w-md"}`}>
-                {screen !== "free" && screen !== "survival" && (
+              <div className={`w-full ${screen === "game" ? "h-full" : "max-w-md"}`}>
+                {screen !== "game" && (
                   <h2 className="panel-header text-white">
                     {titles[screen]}
                   </h2>
@@ -241,26 +258,52 @@ function IconButton({ icon, onClick, ariaLabel }) {
   );
 }
 
-function GameModeMenu({ onFree, onSurvival, onHardcore }) {
+function GameModeMenu({ onSelect }) {
   return (
     <div className="space-y-4 text-white">
       <div
-        onClick={onFree}
+        onClick={() => onSelect('free')}
         className="flex justify-between items-center panel panel-texture p-4 cursor-pointer hover:bg-white/20"
       >
         <span>Free – играть бесплатно</span>
       </div>
       <div
-        onClick={onSurvival}
+        onClick={() => onSelect('survival')}
         className="flex justify-between items-center panel panel-texture p-4 cursor-pointer hover:bg-white/20"
       >
         <span>Выживание – бесплатно</span>
       </div>
       <div
-        onClick={onHardcore}
+        onClick={() => onSelect('hardcore')}
         className="flex justify-between items-center panel panel-texture p-4 cursor-pointer hover:bg-white/20"
       >
         <span>Хардкор – 1 жизнь</span>
+      </div>
+    </div>
+  );
+}
+
+function DifficultyMenu({ onSelect, onBack }) {
+  const levels = [
+    { id: 'easy', label: 'Легко' },
+    { id: 'normal', label: 'Нормально' },
+    { id: 'hard', label: 'Сложно' },
+  ];
+  return (
+    <div className="space-y-4 text-white">
+      {levels.map((l) => (
+        <div
+          key={l.id}
+          onClick={() => onSelect(l.id)}
+          className="flex justify-between items-center panel panel-texture p-4 cursor-pointer hover:bg-white/20"
+        >
+          <span>{l.label}</span>
+        </div>
+      ))}
+      <div className="text-center">
+        <Button onClick={onBack} className="mt-2">
+          <ChevronLeft className="w-4 h-4 inline" /> Назад
+        </Button>
       </div>
     </div>
   );
