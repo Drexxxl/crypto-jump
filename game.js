@@ -260,10 +260,18 @@ document.addEventListener('keyup', e => {
   keys[e.key] = false;
 });
 
-// Show the main menu when the page first loads
-window.addEventListener('DOMContentLoaded', () => {
+// Show the main menu when the page first loads. When the script is loaded
+// after DOMContentLoaded has already fired (e.g. because it is placed at the
+// bottom of the page), run the initialization immediately.
+function showMenu() {
   resizeCanvas();
   menu.classList.add('show');
-});
+}
+
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', showMenu);
+} else {
+  showMenu();
+}
 
 window.addEventListener('resize', resizeCanvas);
