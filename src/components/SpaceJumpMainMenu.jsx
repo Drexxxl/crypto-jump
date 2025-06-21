@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
-import DoodleJumpGame from "./game/DoodleJumpGame";
+import GameScene from "./game/GameScene";
 
 export default function SpaceJumpMainMenu() {
   const [screen, setScreen] = useState("menu");
@@ -39,7 +39,7 @@ export default function SpaceJumpMainMenu() {
       case "profile":
         return <Profile />;
       case "free":
-        return <DoodleJumpGame onExit={() => setScreen("menu")} />;
+        return <GameScene onExit={() => setScreen("menu")} />;
       case "ton":
         return <About />;
       case "settings":
