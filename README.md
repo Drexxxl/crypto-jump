@@ -1,6 +1,8 @@
 # SpaceJump
 
-SpaceJump is a simple arcade game inspired by Doodle Jump. This repository contains a minimal version that can be deployed as a Telegram mini app or to Vercel as a static site.
+SpaceJump is a simple arcade game inspired by Doodle Jump. This repository contains a minimal version that can be deployed as a Telegram mini app or as a static site on any hosting service.
+
+The UI has been polished with a starry background, animated rocket and Orbitron font to give the game a more futuristic look.
 
 ## Running locally
 
