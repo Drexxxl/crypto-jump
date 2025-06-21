@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
+import DoodleJumpGame from "./game/DoodleJumpGame";
 
 export default function SpaceJumpMainMenu() {
   const [screen, setScreen] = useState("menu");
@@ -22,12 +23,13 @@ export default function SpaceJumpMainMenu() {
     profile: "Профиль",
     ton: "О проекте",
     settings: "Настройки",
+    free: "Бесплатная игра",
   };
 
   const ScreenContent = () => {
     switch (screen) {
       case "play":
-        return <GameModeMenu />;
+        return <GameModeMenu onFree={() => setScreen("free")} />;
       case "list":
         return <Leaderboard />;
       case "trophy":
@@ -36,6 +38,8 @@ export default function SpaceJumpMainMenu() {
         return <Shop />;
       case "profile":
         return <Profile />;
+      case "free":
+        return <DoodleJumpGame onExit={() => setScreen("menu")} />;
       case "ton":
         return <About />;
       case "settings":
@@ -229,19 +233,19 @@ function IconButton({ icon, onClick, ariaLabel }) {
   );
 }
 
-function GameModeMenu() {
-  const modes = [
-    "Free – играть бесплатно",
-    "Выжить – вход 1 TON",
-  ];
+function GameModeMenu({ onFree }) {
   return (
     <div className="space-y-4 text-white">
-      {modes.map((m) => (
-        <div key={m} className="flex justify-between items-center bg-white/10 p-4 rounded-md">
-          <span>{m}</span>
-          <span className="text-xs px-2 py-1 bg-yellow-500 text-black rounded">SOON</span>
-        </div>
-      ))}
+      <div
+        onClick={onFree}
+        className="flex justify-between items-center bg-white/10 p-4 rounded-md cursor-pointer hover:bg-white/20"
+      >
+        <span>Free – играть бесплатно</span>
+      </div>
+      <div className="flex justify-between items-center bg-white/10 p-4 rounded-md opacity-50">
+        <span>Выжить – вход 1 TON</span>
+        <span className="text-xs px-2 py-1 bg-yellow-500 text-black rounded">SOON</span>
+      </div>
     </div>
   );
 }
