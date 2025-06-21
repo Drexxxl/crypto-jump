@@ -1,38 +1,78 @@
 import React, { useState } from "react";
-import { Home, List, Trophy, Grid, User, ChevronLeft } from "lucide-react";
+import {
+  Home,
+  List,
+  Trophy,
+  Grid,
+  User,
+  ChevronLeft,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function SpaceJumpMainMenu() {
   const [screen, setScreen] = useState("menu");
 
+  const titles = {
+    play: "Игра скоро",
+    home: "Главная",
+    list: "Таблица лидеров",
+    trophy: "Достижения",
+    grid: "Меню",
+    profile: "Профиль",
+    ton: "О проекте",
+    settings: "Настройки",
+  };
+
   const ScreenContent = ({ title }) => (
-    <div className="flex flex-col items-center justify-center h-full text-white text-2xl">
+    <div className="flex flex-col items-center justify-center h-full text-center p-4 text-white text-2xl">
       {title}
     </div>
   );
 
   return (
-    <div className="relative w-full min-h-screen bg-black overflow-hidden p-8 flex flex-col">
+    <div className="relative w-full min-h-screen bg-black overflow-hidden p-4 md:p-8 flex flex-col items-center max-w-md md:max-w-2xl mx-auto">
       {/* Новый CSS-анимированный звёздный фон */}
       <div className="absolute inset-0 z-0">
         <div className="stars-layer"></div>
       </div>
 
       {/* Верхняя панель */}
-      <div className="absolute top-8 left-0 right-0 z-10 flex justify-between items-center px-4 md:px-8">
+      <div className="absolute top-4 md:top-8 left-0 right-0 z-10 flex justify-between items-center px-4 md:px-8">
         {screen !== "menu" ? (
-          <button onClick={() => setScreen("menu")} className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform">
+          <button
+            onClick={() => setScreen("menu")}
+            className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform"
+            aria-label="Назад"
+          >
             <ChevronLeft className="w-6 h-6 text-white" />
           </button>
         ) : (
-          <div className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform">
-            <img src="https://cdn-icons-png.flaticon.com/512/3791/3791513.png" alt="TON" className="w-6 h-6" />
-          </div>
+          <button
+            onClick={() => setScreen("ton")}
+            className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform"
+            aria-label="О проекте"
+          >
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/3791/3791513.png"
+              alt="TON"
+              className="w-6 h-6"
+            />
+          </button>
         )}
-        <h1 className="text-white text-4xl md:text-5xl font-black tracking-widest">SpaceJump</h1>
-        <div className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform">
-          <img src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png" alt="Settings" className="w-6 h-6" />
-        </div>
+        <h1 className="text-white text-4xl md:text-5xl font-black tracking-widest">
+          SpaceJump
+        </h1>
+        <button
+          onClick={() => setScreen("settings")}
+          className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform"
+          aria-label="Настройки"
+        >
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png"
+            alt="Settings"
+            className="w-6 h-6"
+          />
+        </button>
       </div>
 
       {screen === "menu" && (
@@ -43,19 +83,19 @@ export default function SpaceJumpMainMenu() {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setScreen("play")}
-              className="bg-white text-black w-48 h-48 md:w-64 md:h-64 text-5xl md:text-6xl font-bold rounded-full shadow-2xl flex items-center justify-center neon-button"
+              className="bg-white text-black w-40 h-40 sm:w-48 sm:h-48 md:w-64 md:h-64 text-5xl md:text-6xl font-bold rounded-full shadow-2xl flex items-center justify-center neon-button"
             >
               ▶
             </motion.button>
           </div>
 
           {/* Нижнее меню */}
-          <div className="absolute bottom-8 w-full flex justify-center gap-6 md:gap-12 z-10 text-white">
-            <IconButton icon={<Home />} onClick={() => setScreen("home")}/>
-            <IconButton icon={<List />} onClick={() => setScreen("list")}/>
-            <IconButton icon={<Trophy />} onClick={() => setScreen("trophy")}/>
-            <IconButton icon={<Grid />} onClick={() => setScreen("grid")}/>
-            <IconButton icon={<User />} onClick={() => setScreen("profile")}/>
+          <div className="absolute bottom-4 md:bottom-8 w-full flex justify-center gap-6 md:gap-12 z-10 text-white">
+            <IconButton ariaLabel="Главная" icon={<Home />} onClick={() => setScreen("home")}/>
+            <IconButton ariaLabel="Лидеры" icon={<List />} onClick={() => setScreen("list")}/>
+            <IconButton ariaLabel="Достижения" icon={<Trophy />} onClick={() => setScreen("trophy")}/>
+            <IconButton ariaLabel="Меню" icon={<Grid />} onClick={() => setScreen("grid")}/>
+            <IconButton ariaLabel="Профиль" icon={<User />} onClick={() => setScreen("profile")}/>
           </div>
         </>
       )}
@@ -69,7 +109,7 @@ export default function SpaceJumpMainMenu() {
             exit={{ opacity: 0 }}
             className="flex grow items-center justify-center z-10"
           >
-            <ScreenContent title={screen === "play" ? "Игра скоро" : screen === "home" ? "Главная" : screen === "list" ? "Таблица лидеров" : screen === "trophy" ? "Достижения" : screen === "grid" ? "Меню" : "Профиль"} />
+            <ScreenContent title={titles[screen]} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -115,15 +155,16 @@ export default function SpaceJumpMainMenu() {
           align-items: center;
           justify-content: center;
           box-shadow: 0 0 10px #00f6ff, 0 0 20px #00f6ff;
+          cursor: pointer;
         }
       `}</style>
     </div>
   );
 }
 
-function IconButton({ icon, onClick }) {
+function IconButton({ icon, onClick, ariaLabel }) {
   return (
-    <button onClick={onClick} className="hover:scale-105 transition-transform">
+    <button onClick={onClick} aria-label={ariaLabel} className="hover:scale-105 transition-transform">
       <div className="icon-wrapper">
         {icon}
       </div>
