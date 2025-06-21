@@ -24,12 +24,18 @@ export default function SpaceJumpMainMenu() {
     ton: "О проекте",
     settings: "Настройки",
     free: "Бесплатная игра",
+    survival: "Выживание",
   };
 
   const ScreenContent = () => {
     switch (screen) {
       case "play":
-        return <GameModeMenu onFree={() => setScreen("free")} />;
+        return (
+          <GameModeMenu
+            onFree={() => setScreen("free")}
+            onSurvival={() => setScreen("survival")}
+          />
+        );
       case "list":
         return <Leaderboard />;
       case "trophy":
@@ -40,6 +46,8 @@ export default function SpaceJumpMainMenu() {
         return <Profile />;
       case "free":
         return <DoodleJumpGame onExit={() => setScreen("menu")} />;
+      case "survival":
+        return <DoodleJumpGame mode="survival" onExit={() => setScreen("menu")} />;
       case "ton":
         return <About />;
       case "settings":
@@ -216,7 +224,7 @@ function IconButton({ icon, onClick, ariaLabel }) {
   );
 }
 
-function GameModeMenu({ onFree }) {
+function GameModeMenu({ onFree, onSurvival }) {
   return (
     <div className="space-y-4 text-white">
       <div
@@ -225,9 +233,11 @@ function GameModeMenu({ onFree }) {
       >
         <span>Free – играть бесплатно</span>
       </div>
-      <div className="flex justify-between items-center bg-white/10 p-4 rounded-md opacity-50">
-        <span>Выжить – вход 1 TON</span>
-        <span className="text-xs px-2 py-1 bg-yellow-500 text-black rounded">SOON</span>
+      <div
+        onClick={onSurvival}
+        className="flex justify-between items-center bg-white/10 p-4 rounded-md cursor-pointer hover:bg-white/20"
+      >
+        <span>Выживание – бесплатно</span>
       </div>
     </div>
   );
