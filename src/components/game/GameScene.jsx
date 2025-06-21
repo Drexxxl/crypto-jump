@@ -80,32 +80,6 @@ export default function GameScene({ onExit }) {
         </svg>
       </div>
 
-      <style jsx>{`
-        .stars-layer {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          background: radial-gradient(ellipse at bottom, #0d1b2a 0%, #000000 100%);
-          overflow: hidden;
-        }
-        .stars-layer::before {
-          content: "";
-          position: absolute;
-          width: 200%;
-          height: 200%;
-          background: transparent url("https://www.transparenttextures.com/patterns/stardust.png") repeat;
-          animation: scrollStars 60s linear infinite;
-          opacity: 0.3;
-        }
-        @keyframes scrollStars {
-          from {
-            transform: translateY(0);
-          }
-          to {
-            transform: translateY(-1000px);
-          }
-        }
-      `}</style>
     </div>
   );
 }

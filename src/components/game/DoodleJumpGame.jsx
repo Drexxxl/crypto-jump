@@ -10,10 +10,17 @@ export default function DoodleJumpGame({ onExit }) {
   const [tons, setTons] = useState(0);
   const shieldRef = useRef(0);
   const [showHint, setShowHint] = useState(true);
+  const [paused, setPaused] = useState(false);
+  const pausedRef = useRef(false);
 
   const coinSound = useRef(null);
 
   const totalScore = Math.floor(maxHeightRef.current / 100) + score;
+
+  const togglePause = () => {
+    setPaused((p) => !p);
+    pausedRef.current = !pausedRef.current;
+  };
 
   const handleRestart = () => {
     setScore(0);
@@ -21,7 +28,17 @@ export default function DoodleJumpGame({ onExit }) {
     setRestartKey((k) => k + 1);
     setTons(0);
     shieldRef.current = 0;
+    setPaused(false);
+    pausedRef.current = false;
   };
+
+  useEffect(() => {
+    const onPauseKey = (e) => {
+      if (e.key.toLowerCase() === 'p') togglePause();
+    };
+    window.addEventListener('keydown', onPauseKey);
+    return () => window.removeEventListener('keydown', onPauseKey);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -105,6 +122,10 @@ export default function DoodleJumpGame({ onExit }) {
     const jumpVy = -8;
     const baseGravity = 0.2;
     const loop = () => {
+      if (pausedRef.current) {
+        animId = requestAnimationFrame(loop);
+        return;
+      }
       const difficulty = 1 + maxHeightRef.current / 2000;
       const speed = baseSpeed * difficulty;
       const gravity = baseGravity * difficulty;
@@ -295,13 +316,22 @@ export default function DoodleJumpGame({ onExit }) {
       </div>
 
       <div className="absolute top-0 left-0 w-full p-2 sm:p-4 flex justify-between items-center text-xs sm:text-base bg-black/30 backdrop-blur-md border-b border-white/20 z-20">
-        <button
-          title="Back"
-          onClick={onExit}
-          className="rounded-full bg-white/10 p-2 hover:bg-white/20"
-        >
-          ←
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            title="Back"
+            onClick={onExit}
+            className="rounded-full bg-white/10 p-2 hover:bg-white/20"
+          >
+            ←
+          </button>
+          <button
+            title={paused ? 'Resume' : 'Pause'}
+            onClick={togglePause}
+            className="rounded-full bg-white/10 p-2 hover:bg-white/20"
+          >
+            {paused ? '▶' : '⏸'}
+          </button>
+        </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded">
             <span>🚀</span>
@@ -323,6 +353,13 @@ export default function DoodleJumpGame({ onExit }) {
         </div>
       )}
 
+      {paused && !gameOver && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-20 bg-black/60 text-center">
+          <p className="text-xl mb-4">Пауза</p>
+          <Button onClick={togglePause}>Продолжить</Button>
+        </div>
+      )}
+
       {gameOver && (
         <div className="absolute inset-0 flex flex-col items-center justify-center z-20 text-center">
           <p className="text-xl mb-2">Game Over</p>
@@ -335,28 +372,6 @@ export default function DoodleJumpGame({ onExit }) {
       )}
 
       <canvas ref={canvasRef} className="relative z-10 w-full h-full border border-white/20 rounded-md" />
-      <style>{`
-        .stars-layer {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          background: radial-gradient(ellipse at bottom, #0d1b2a 0%, #000000 100%);
-          overflow: hidden;
-        }
-        .stars-layer::before {
-          content: '';
-          position: absolute;
-          width: 200%;
-          height: 200%;
-          background: transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
-          animation: scrollStars 60s linear infinite;
-          opacity: 0.3;
-        }
-        @keyframes scrollStars {
-          from { transform: translateY(0); }
-          to { transform: translateY(-1000px); }
-        }
-      `}</style>
     </div>
   );
 }
