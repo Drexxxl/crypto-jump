@@ -186,4 +186,77 @@ function StarField({ className = "", size = 1, speed = 60, density = 100 }) {
 
 function StarStreaks() {
   const streaks = Array.from({ length: 40 }).map((_, i) => (
-    <div key={i} className="absolute w-0.5 h-8 bg-white/70 blur-[1px] -z-10" style={{ top: `-${
+    <div
+      key={i}
+      className="absolute w-px h-8 bg-white/60 blur-[1px] -z-10"
+      style={{
+        top: `-${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+        animation: `streakFall ${Math.random() * 2 + 2}s linear infinite`,
+        animationDelay: `-${Math.random() * 4}s`,
+      }}
+    />
+  ));
+  return <div className="absolute inset-0 overflow-hidden -z-10">{streaks}</div>;
+}
+
+function NebulaCloud() {
+  return (
+    <div className="absolute inset-0 -z-20 animate-cloudDrift pointer-events-none" />
+  );
+}
+
+function BlackHole() {
+  return (
+    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 -z-20 pointer-events-none">
+      <div className="relative w-64 h-64 rounded-full overflow-hidden animate-spin-slow">
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-purple-900 to-black rounded-full blur-sm" />
+        <div className="absolute inset-6 rounded-full bg-black" />
+      </div>
+    </div>
+  );
+}
+
+function GlobalKeyframes() {
+  return (
+    <style>{`
+      @keyframes ringOrbit {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      @keyframes pulseNeon {
+        0%,100% { box-shadow: 0 0 20px rgba(0,255,255,0.4); }
+        50% { box-shadow: 0 0 40px rgba(0,255,255,0.8); }
+      }
+      @keyframes floatPlanet {
+        0%,100% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+      }
+      @keyframes starScroll30 {
+        from { transform: translateY(0); }
+        to { transform: translateY(100%); }
+      }
+      @keyframes starScroll60 {
+        from { transform: translateY(0); }
+        to { transform: translateY(100%); }
+      }
+      @keyframes starScroll90 {
+        from { transform: translateY(0); }
+        to { transform: translateY(100%); }
+      }
+      @keyframes streakFall {
+        from { transform: translateY(0); opacity: 1; }
+        to { transform: translateY(120vh); opacity: 0; }
+      }
+      @keyframes cloudDrift {
+        from { transform: translateX(-20%); }
+        to { transform: translateX(20%); }
+      }
+      @keyframes spin-slow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+    `}</style>
+  );
+}
+
