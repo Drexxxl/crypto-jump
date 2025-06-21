@@ -8,14 +8,15 @@
 </head>
 <body>
 <div id="menu">
-  <div id="settings">⚙️</div>
-  <button id="start">Start Game</button>
-  <div id="nav">
-    <span>📜</span>
-    <span>🏆</span>
-    <span>🎁</span>
-    <span>👤</span>
-  </div>
+  <button id="settings" aria-label="Настройки">⚙️</button>
+  <button id="start">Играть</button>
+  <nav id="nav">
+    <button class="quest" data-action="quests">📜<span>Задания</span></button>
+    <button class="leaderboard" data-action="leaderboard">🏆<span>Рейтинг</span></button>
+    <button class="market" data-action="market">🛒<span>Маркет</span></button>
+    <button class="collections" data-action="collections">📚<span>Коллекции</span></button>
+    <button class="profile" data-action="profile">👤<span>Профиль</span></button>
+  </nav>
 </div>
 <canvas id="gameCanvas" width="400" height="600" style="display:none"></canvas>
 <script src="game.js"></script>
