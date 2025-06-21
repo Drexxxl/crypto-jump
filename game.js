@@ -12,7 +12,7 @@ const loadingEl = document.getElementById('loading');
 const BASE_WIDTH = 360;
 const BASE_HEIGHT = 640;
 const MAX_GAP_RATIO = 0.15; // max distance between platforms relative to screen
-const MIN_PLATFORMS = 8;    // minimum number of platforms visible
+let MIN_PLATFORMS = Math.ceil(window.innerHeight / 100); // minimum number of platforms visible
 let scale = 1;
 
 function resizeGame() {
@@ -46,9 +46,11 @@ let keys = { left: false, right: false };
 let platformGap = 50;
 let hasShield = false;
 let rocketActive = false;
+let springActive = false;
 let shieldStartTime = 0;
 let rocketStartTime = 0;
-const boostDuration = 7000; // ms
+let springStartTime = 0;
+const boostDuration = 5000; // ms
 const stars = [];
 
 function initStars() {
@@ -100,6 +102,7 @@ function createPlatform(y) {
 
 function resetGame() {
   resizeGame();
+  MIN_PLATFORMS = Math.ceil(canvas.height / 100);
   player.width = 30 * scale;
   player.height = 30 * scale;
   player.jump = -6 * scale;
@@ -111,8 +114,10 @@ function resetGame() {
   platformGap = Math.min(50 * scale, canvas.height * MAX_GAP_RATIO);
   hasShield = false;
   rocketActive = false;
+  springActive = false;
   shieldStartTime = 0;
   rocketStartTime = 0;
+  springStartTime = 0;
   initStars();
   // starting platform directly under the player
   const startY = Math.min(
@@ -187,16 +192,20 @@ function update() {
         }
       } else {
         let bounce = player.jump;
-        if (p.boost === 'spring') bounce = player.jump * 0.75;
+        if (p.boost === 'spring') {
+          springActive = true;
+          springStartTime = performance.now();
+        }
         if (p.boost === 'rocket') {
           rocketActive = true;
-          rocketStartTime = Date.now();
+          rocketStartTime = performance.now();
         }
+        if (springActive) bounce = player.jump * 0.75;
         if (rocketActive) bounce = player.jump * 2;
         player.dy = bounce;
         if (p.boost === 'shield') {
           hasShield = true;
-          shieldStartTime = Date.now();
+          shieldStartTime = performance.now();
         }
       }
       p.boost = null;
@@ -234,11 +243,14 @@ function update() {
     }
   }
 
-  if (hasShield && Date.now() - shieldStartTime > boostDuration) {
+  if (hasShield && performance.now() - shieldStartTime > boostDuration) {
     hasShield = false;
   }
+  if (springActive && performance.now() - springStartTime > boostDuration) {
+    springActive = false;
+  }
   if (rocketActive) {
-    if (Date.now() - rocketStartTime > boostDuration) {
+    if (performance.now() - rocketStartTime > boostDuration) {
       rocketActive = false;
     } else {
       player.dy = player.jump * 2;
@@ -375,8 +387,8 @@ function startGame() {
   startBtn.style.display = 'none';
   gameOverEl.style.display = 'none';
   restartBtn.style.display = 'none';
-  if (window.Telegram && Telegram.WebApp && Telegram.WebApp.expand) {
-    Telegram.WebApp.expand();
+  if (window.Telegram && Telegram.WebApp && Telegram.WebApp.requestFullscreen) {
+    Telegram.WebApp.requestFullscreen();
   }
   resetGame();
   gameState = 'playing';
@@ -442,6 +454,7 @@ function handleResize() {
   const prevW = canvas.width;
   const prevH = canvas.height;
   resizeGame();
+  MIN_PLATFORMS = Math.ceil(canvas.height / 100);
   const ratioX = canvas.width / prevW;
   const ratioY = canvas.height / prevH;
 
