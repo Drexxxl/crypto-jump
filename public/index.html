@@ -1,45 +1,54 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Crypto Jump</title>
-  <link rel="stylesheet" href="styles/main.css" />
+  <meta charset="UTF-8">
+  <title>Crypto Jump – Menu</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-  <div class="space"></div>
-  <header class="top-bar">
-    <div class="energy"><img class="icon" src="icons/battery.svg" alt="energy" /><span class="value">5</span></div>
-    <div class="top-right">
-      <div class="avatar">
-        <span class="avatar-indicator">3</span>
-      </div>
-      <a class="icon" href="menu.html"><img src="icons/group.svg" alt="menu" /></a>
-      <a class="icon" href="settings.html"><img src="icons/settings.svg" alt="settings" /></a>
+  <div id="starfield"></div>
+
+  <header class="hud">
+    <div class="energy hud-block"><span id="energyVal">87</span></div>
+    <div class="avatar hud-block"><span class="badge">3</span></div>
+    <div class="hud-right">
+      <button class="icon-btn" id="friendBtn"><img src="icons/friend.svg"></button>
+      <button class="icon-btn" id="settingsBtn"><img src="icons/settings.svg"></button>
     </div>
   </header>
-  <main class="content">
-    <div class="center-sphere">
-      <a class="play-btn" href="game.html">Play</a>
+
+  <main>
+    <div class="planet">
+      <button id="playBtn" class="play-btn">Play</button>
     </div>
-    <div class="modes">
-      <div class="mode turquoise">&nbsp;</div>
-      <div class="mode gold">&nbsp;</div>
-      <div class="mode purple">&nbsp;</div>
+
+    <div class="mode-bar">
+      <div class="cube cube-teal"></div>
+      <div class="cube cube-gold"></div>
+      <div class="cube cube-purple"></div>
     </div>
+
+    <section class="league-card">
+      <button class="icon-btn info"><img src="icons/info.svg"></button>
+      <div class="league-content">
+        <h2>Земная Лига</h2>
+        <p>Сезон 1 · 🏆130</p>
+        <div class="progress"><span style="width:70%"></span></div>
+      </div>
+      <button class="icon-btn reload"><img src="icons/reload.svg"></button>
+    </section>
   </main>
-  <footer class="bottom-info">
-    <div class="league">Земная Лига</div>
-    <div class="trophies">Сезон 1 · <img src="icons/trophy.svg" alt="trophy" class="inline-icon" />130</div>
-    <div class="progress"><div class="progress-bar"></div></div>
-  </footer>
+
   <nav class="bottom-nav">
-    <a href="index.html" class="active"><img src="icons/home.svg" alt="home" /></a>
-    <a href="shop.html"><img src="icons/helmet.svg" alt="shop" /></a>
-    <a href="rating.html"><img src="icons/trophy.svg" alt="rating" /></a>
-    <a href="settings.html"><img src="icons/cube.svg" alt="settings" /></a>
-    <a href="menu.html"><img src="icons/user.svg" alt="profile" /></a>
+    <button class="nav-item active"><img src="icons/home.svg"></button>
+    <button class="nav-item"><img src="icons/helm.svg"></button>
+    <button class="nav-item"><img src="icons/trophy.svg"></button>
+    <button class="nav-item"><img src="icons/box.svg"></button>
+    <button class="nav-item"><img src="icons/profile.svg"></button>
   </nav>
-  <script src="scripts/telegram.js"></script>
+
+<script src="scripts/menu.js"></script>
 </body>
 </html>
