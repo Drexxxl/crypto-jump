@@ -30,7 +30,7 @@ export default function SpaceJumpMainMenu() {
   );
 
   return (
-    <div className="relative w-full min-h-screen bg-black overflow-hidden p-4 md:p-8 flex flex-col items-center max-w-md md:max-w-2xl mx-auto">
+    <div className="relative w-full min-h-screen lg:h-screen bg-black overflow-hidden p-4 md:p-8 flex flex-col items-center max-w-md md:max-w-2xl xl:max-w-none mx-auto">
       {/* Новый CSS-анимированный звёздный фон */}
       <div className="absolute inset-0 z-0">
         <div className="stars-layer"></div>
@@ -75,32 +75,48 @@ export default function SpaceJumpMainMenu() {
         </button>
       </div>
 
-      {screen === "menu" && (
-        <>
-          {/* Главная кнопка Играть */}
-          <div className="flex grow justify-center items-center z-10 relative">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setScreen("play")}
-              className="bg-white text-black w-40 h-40 sm:w-48 sm:h-48 md:w-64 md:h-64 text-5xl md:text-6xl font-bold rounded-full shadow-2xl flex items-center justify-center neon-button"
-            >
-              ▶
-            </motion.button>
-          </div>
-
-          {/* Нижнее меню */}
-          <div className="absolute bottom-4 md:bottom-8 w-full flex justify-center gap-6 md:gap-12 z-10 text-white">
-            <IconButton ariaLabel="Главная" icon={<Home />} onClick={() => setScreen("home")}/>
-            <IconButton ariaLabel="Лидеры" icon={<List />} onClick={() => setScreen("list")}/>
-            <IconButton ariaLabel="Достижения" icon={<Trophy />} onClick={() => setScreen("trophy")}/>
-            <IconButton ariaLabel="Меню" icon={<Grid />} onClick={() => setScreen("grid")}/>
-            <IconButton ariaLabel="Профиль" icon={<User />} onClick={() => setScreen("profile")}/>
-          </div>
-        </>
-      )}
-
       <AnimatePresence>
+        {screen === "menu" && (
+          <>
+            {/* Главная кнопка Играть */}
+            <motion.div
+              key="play"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ type: "spring", stiffness: 260, damping: 20 }}
+              className="flex grow justify-center items-center z-10 relative"
+            >
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setScreen("play")}
+                className="bg-white text-black w-40 h-40 sm:w-48 sm:h-48 md:w-64 md:h-64 text-5xl md:text-6xl font-bold rounded-full shadow-2xl flex items-center justify-center neon-button"
+              >
+                ▶
+              </motion.button>
+            </motion.div>
+
+            {/* Нижнее меню */}
+            <motion.div
+              key="menu"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.2 }}
+              className="absolute bottom-4 md:bottom-8 w-full flex justify-center gap-6 md:gap-12 z-10 text-white"
+            >
+              <IconButton ariaLabel="Главная" icon={<Home />} onClick={() => setScreen("home")}/>
+              <IconButton ariaLabel="Лидеры" icon={<List />} onClick={() => setScreen("list")}/>
+              <IconButton ariaLabel="Достижения" icon={<Trophy />} onClick={() => setScreen("trophy")}/>
+              <IconButton ariaLabel="Меню" icon={<Grid />} onClick={() => setScreen("grid")}/>
+              <IconButton ariaLabel="Профиль" icon={<User />} onClick={() => setScreen("profile")}/>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence mode="wait">
         {screen !== "menu" && (
           <motion.div
             key={screen}
@@ -128,8 +144,9 @@ export default function SpaceJumpMainMenu() {
           width: 200%;
           height: 200%;
           background: transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
-          animation: moveStars 60s linear infinite;
+          animation: moveStars 90s linear infinite;
           opacity: 0.3;
+          will-change: transform;
         }
 
         @keyframes moveStars {
