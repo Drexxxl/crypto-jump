@@ -153,6 +153,13 @@ canvas {
   border-radius: 8px;
   backdrop-filter: blur(3px);
 }
+.scoreboard span + span {
+  margin-left: 10px;
+}
+
+.boost-ready {
+  color: #ff0;
+}
 
 .overlay {
   position: fixed;

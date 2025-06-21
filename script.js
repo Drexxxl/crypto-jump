@@ -18,8 +18,16 @@ class Game {
     this.difficulty = 1;
     this.gameRunning = true;
 
-    document.getElementById('best').textContent = `Best: ${this.best}`;
+    this.boostReady = true;
+    this.boostCooldown = 3000;
+    this.lastTouchTime = 0;
 
+    const boostEl = document.getElementById('boostStatus');
+    boostEl.textContent = '🔥';
+    boostEl.classList.add('boost-ready');
+
+    document.getElementById('best').textContent = `Best: ${this.best}`;
+    
     this.keys = { left: false, right: false };
     this.touchStartX = null;
 
@@ -36,6 +44,17 @@ class Game {
     window.addEventListener('keydown', e => {
       if (e.key === 'ArrowLeft') this.keys.left = true;
       if (e.key === 'ArrowRight') this.keys.right = true;
+      if ((e.key === ' ' || e.key === 'ArrowUp') && this.boostReady) {
+        this.rocket.vy = this.jumpVelocity * 1.5;
+        this.boostReady = false;
+        document.getElementById('boostStatus').classList.remove('boost-ready');
+        document.getElementById('boostStatus').textContent = '';
+        setTimeout(() => {
+          this.boostReady = true;
+          document.getElementById('boostStatus').classList.add('boost-ready');
+          document.getElementById('boostStatus').textContent = '🔥';
+        }, this.boostCooldown);
+      }
     });
     window.addEventListener('keyup', e => {
       if (e.key === 'ArrowLeft') this.keys.left = false;
@@ -43,6 +62,19 @@ class Game {
     });
 
     this.canvas.addEventListener('touchstart', e => {
+      const now = Date.now();
+      if (now - this.lastTouchTime < 300 && this.boostReady) {
+        this.rocket.vy = this.jumpVelocity * 1.5;
+        this.boostReady = false;
+        document.getElementById('boostStatus').classList.remove('boost-ready');
+        document.getElementById('boostStatus').textContent = '';
+        setTimeout(() => {
+          this.boostReady = true;
+          document.getElementById('boostStatus').classList.add('boost-ready');
+          document.getElementById('boostStatus').textContent = '🔥';
+        }, this.boostCooldown);
+      }
+      this.lastTouchTime = now;
       this.touchStartX = e.touches[0].clientX;
     });
     this.canvas.addEventListener('touchmove', e => {
