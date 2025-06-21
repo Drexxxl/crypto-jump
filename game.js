@@ -185,12 +185,12 @@ function update() {
         }
       } else {
         let bounce = player.jump;
-        if (p.boost === 'spring') bounce = player.jump * 1.5;
+        if (p.boost === 'spring') bounce = player.jump * 0.75;
         if (p.boost === 'rocket') {
           rocketActive = true;
           rocketStartTime = Date.now();
         }
-        if (rocketActive) bounce = player.jump * 4;
+        if (rocketActive) bounce = player.jump * 2;
         player.dy = bounce;
         if (p.boost === 'shield') {
           hasShield = true;
@@ -234,7 +234,7 @@ function update() {
     if (Date.now() - rocketStartTime > boostDuration) {
       rocketActive = false;
     } else {
-      player.dy = player.jump * 4;
+      player.dy = player.jump * 2;
     }
   }
 
@@ -385,6 +385,23 @@ document.addEventListener('keydown', e => {
 document.addEventListener('keyup', e => {
   if (e.key === 'ArrowLeft') keys.left = false;
   else if (e.key === 'ArrowRight') keys.right = false;
+});
+
+function handleTouch(e) {
+  if (e.touches && e.touches[0]) {
+    const x = e.touches[0].clientX;
+    const mid = window.innerWidth / 2;
+    keys.left = x < mid;
+    keys.right = x >= mid;
+  }
+  e.preventDefault();
+}
+
+document.addEventListener('touchstart', handleTouch, { passive: false });
+document.addEventListener('touchmove', handleTouch, { passive: false });
+document.addEventListener('touchend', () => {
+  keys.left = false;
+  keys.right = false;
 });
 
 
