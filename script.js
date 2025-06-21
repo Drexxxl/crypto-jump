@@ -13,15 +13,31 @@ const maxPlatforms = 6;
 
 let score = 0;
 let best = parseInt(localStorage.getItem('best')) || 0;
+let difficulty = 1;
+let gameRunning = true;
 document.getElementById('best').textContent = `Best: ${best}`;
 
 function createPlatform(y) {
+  const r = Math.random();
+  let type = 'normal';
+  if (r < Math.min(0.15 * difficulty, 0.3)) {
+    type = 'breakable';
+  } else if (r < Math.min(0.3 * difficulty, 0.6)) {
+    type = 'moving';
+  }
+  let vx = 0;
+  if (type === 'moving') {
+    const dir = Math.random() < 0.5 ? 1 : -1;
+    vx = dir * (1 + difficulty * 0.3);
+  }
   return {
     x: Math.random() * (width - platformW),
     y,
     width: platformW,
     height: platformH,
-    vx: Math.random() < 0.2 ? (Math.random() < 0.5 ? 1 : -1) : 0
+    vx,
+    type,
+    remove: false
   };
 }
 
@@ -75,8 +91,16 @@ function drawRocket() {
 function drawPlatforms() {
   platforms.forEach(p => {
     const grad = ctx.createLinearGradient(p.x, p.y, p.x, p.y + p.height);
-    grad.addColorStop(0, '#0f0');
-    grad.addColorStop(1, '#090');
+    if (p.type === 'breakable') {
+      grad.addColorStop(0, '#f55');
+      grad.addColorStop(1, '#a00');
+    } else if (p.type === 'moving') {
+      grad.addColorStop(0, '#0ff');
+      grad.addColorStop(1, '#09c');
+    } else {
+      grad.addColorStop(0, '#0f0');
+      grad.addColorStop(1, '#090');
+    }
     ctx.fillStyle = grad;
     ctx.fillRect(p.x, p.y, p.width, p.height);
   });
@@ -103,6 +127,9 @@ function update() {
       rocket.y + rocket.height < p.y + p.height + rocket.vy
     ) {
       rocket.vy = jumpVelocity;
+      if (p.type === 'breakable') {
+        p.remove = true;
+      }
     }
   });
 
@@ -110,12 +137,14 @@ function update() {
     const diff = height / 2 - rocket.y;
     rocket.y = height / 2;
     score += Math.floor(diff);
+    difficulty = 1 + score / 1000;
     document.getElementById('score').textContent = `Score: ${score}`;
     platforms.forEach(p => (p.y += diff));
-    if (Math.random() < 0.1) {
+    const spawnChance = Math.min(0.1 + difficulty * 0.05, 0.4);
+    if (Math.random() < spawnChance) {
       platforms.push(createPlatform(-platformH));
     }
-    platforms = platforms.filter(p => p.y < height);
+    platforms = platforms.filter(p => p.y < height && !p.remove);
   }
 
   if (rocket.y > height) {
@@ -124,12 +153,13 @@ function update() {
 }
 
 function gameOver() {
+  gameRunning = false;
   if (score > best) {
     best = score;
     localStorage.setItem('best', best);
   }
-  alert(`Game Over\nScore: ${score}\nBest: ${best}`);
-  window.location.href = 'index.html';
+  document.getElementById('finalScore').textContent = `Score: ${score} | Best: ${best}`;
+  document.getElementById('gameOverOverlay').classList.remove('hidden');
 }
 
 function loop() {
@@ -137,7 +167,9 @@ function loop() {
   drawPlatforms();
   drawRocket();
   update();
-  requestAnimationFrame(loop);
+  if (gameRunning) {
+    requestAnimationFrame(loop);
+  }
 }
 
 window.addEventListener('resize', () => {
@@ -153,6 +185,29 @@ window.addEventListener('keydown', e => {
 window.addEventListener('keyup', e => {
   if (e.key === 'ArrowLeft') keys.left = false;
   if (e.key === 'ArrowRight') keys.right = false;
+});
+
+let touchStartX = null;
+canvas.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+});
+canvas.addEventListener('touchmove', e => {
+  const dx = e.touches[0].clientX - touchStartX;
+  if (dx > 10) {
+    keys.right = true;
+    keys.left = false;
+  } else if (dx < -10) {
+    keys.left = true;
+    keys.right = false;
+  }
+});
+canvas.addEventListener('touchend', () => {
+  keys.left = false;
+  keys.right = false;
+});
+
+document.getElementById('restartBtn').addEventListener('click', () => {
+  window.location.href = 'index.html';
 });
 
 initPlatforms();
