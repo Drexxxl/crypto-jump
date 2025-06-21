@@ -5,7 +5,17 @@ const startButton = document.getElementById('startButton');
 const scoreboard = document.getElementById('scoreboard');
 const scoreElement = document.getElementById('score');
 const bestScoreElement = document.getElementById('best-score');
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const musicToggle = document.getElementById('musicToggle');
+const jumpSound = new Audio('assets/jump.wav');
+const gameOverSound = new Audio('assets/gameover.wav');
+const music = new Audio('assets/music.mp3');
+music.loop = true;
+
+const rocketImg = new Image();
+rocketImg.src = 'assets/rocket.png';
+
+const platformImg = new Image();
+platformImg.src = 'assets/platform.png';
 
 let gameRunning = false;
 let rocket;
@@ -35,24 +45,14 @@ function initStars() {
   }
 }
 
-function playSound(freq, duration, type = 'sine') {
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = type;
-  osc.frequency.value = freq;
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-  osc.start();
-  osc.stop(audioCtx.currentTime + duration);
-}
-
 function playJumpSound() {
-  playSound(520, 0.1, 'triangle');
+  jumpSound.currentTime = 0;
+  jumpSound.play();
 }
 
 function playGameOverSound() {
-  playSound(220, 0.5, 'sawtooth');
+  gameOverSound.currentTime = 0;
+  gameOverSound.play();
 }
 const GRAVITY = 0.4;
 const GROUND_HEIGHT = 20;
@@ -198,24 +198,32 @@ function draw() {
   ctx.fillStyle = '#444';
   ctx.fillRect(ground.x, ground.y, ground.width, ground.height);
   // draw platforms
-  ctx.fillStyle = '#0f0';
   platforms.forEach(p => {
-    ctx.fillRect(p.x, p.y, p.width, p.height);
+    if (platformImg.complete) {
+      ctx.drawImage(platformImg, p.x, p.y, p.width, p.height);
+    } else {
+      ctx.fillStyle = '#0f0';
+      ctx.fillRect(p.x, p.y, p.width, p.height);
+    }
   });
   // draw rocket
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(rocket.x + 15, rocket.y, 10, 30); // body
-  ctx.fillStyle = '#f00';
-  if (rocket.vy < 0) {
-    ctx.beginPath();
-    ctx.moveTo(rocket.x + 20, rocket.y + 30);
-    ctx.lineTo(rocket.x + 10, rocket.y + 40);
-    ctx.lineTo(rocket.x + 30, rocket.y + 40);
-    ctx.closePath();
-    ctx.fill();
+  if (rocketImg.complete) {
+    ctx.drawImage(rocketImg, rocket.x, rocket.y, rocket.width, rocket.height);
+  } else {
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(rocket.x + 15, rocket.y, 10, 30); // body
+    ctx.fillStyle = '#f00';
+    if (rocket.vy < 0) {
+      ctx.beginPath();
+      ctx.moveTo(rocket.x + 20, rocket.y + 30);
+      ctx.lineTo(rocket.x + 10, rocket.y + 40);
+      ctx.lineTo(rocket.x + 30, rocket.y + 40);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.fillStyle = '#0ff';
+    ctx.fillRect(rocket.x, rocket.y, 40, 10); // top
   }
-  ctx.fillStyle = '#0ff';
-  ctx.fillRect(rocket.x, rocket.y, 40, 10); // top
 }
 
 startButton.addEventListener('click', () => {
@@ -224,6 +232,19 @@ startButton.addEventListener('click', () => {
   canvas.style.display = 'block';
   scoreboard.style.display = 'block';
   init();
+  if (music.paused) {
+    music.play();
+  }
+});
+
+musicToggle.addEventListener('click', () => {
+  if (music.paused) {
+    music.play();
+    musicToggle.textContent = 'Music: On';
+  } else {
+    music.pause();
+    musicToggle.textContent = 'Music: Off';
+  }
 });
 
 document.addEventListener('keydown', e => {
