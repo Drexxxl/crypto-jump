@@ -9,10 +9,21 @@ export default function DoodleJumpGame({ onExit }) {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    canvas.width = 320;
-    canvas.height = 480;
 
-    const player = { x: canvas.width / 2 - 20, y: 400, vy: -8, w: 40, h: 40 };
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const player = {
+      x: canvas.width / 2 - 20,
+      y: canvas.height - 80,
+      vy: -8,
+      w: 40,
+      h: 40,
+    };
     const platforms = [];
     const pW = 60;
     const pH = 10;
@@ -73,8 +84,10 @@ export default function DoodleJumpGame({ onExit }) {
       }
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.textBaseline = "bottom";
+      ctx.font = player.h + "px sans-serif";
       ctx.fillStyle = "#fff";
-      ctx.fillRect(player.x, player.y, player.w, player.h);
+      ctx.fillText("🚀", player.x, player.y + player.h);
       ctx.fillStyle = "#0f0";
       platforms.forEach((p) => ctx.fillRect(p.x, p.y, pW, pH));
       ctx.fillStyle = "#fff";
@@ -88,11 +101,12 @@ export default function DoodleJumpGame({ onExit }) {
       cancelAnimationFrame(animId);
       window.removeEventListener("keydown", keyDown);
       window.removeEventListener("keyup", keyUp);
+      window.removeEventListener("resize", resize);
     };
-  }, [score]);
+  }, []);
 
   return (
-    <div className="text-white flex flex-col items-center">
+    <div className="text-white flex flex-col items-center justify-center w-screen h-screen">
       {gameOver && (
         <div className="mb-4 text-center">
           <p className="text-xl">Game Over</p>
@@ -100,7 +114,7 @@ export default function DoodleJumpGame({ onExit }) {
           <Button onClick={onExit}>В меню</Button>
         </div>
       )}
-      <canvas ref={canvasRef} className="border border-white" />
+      <canvas ref={canvasRef} className="w-full h-full border border-white block" />
     </div>
   );
 }

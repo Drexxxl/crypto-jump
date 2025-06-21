@@ -50,7 +50,7 @@ export default function SpaceJumpMainMenu() {
   };
 
   return (
-    <div className="relative w-full min-h-screen lg:h-screen bg-black overflow-hidden p-4 md:p-8 flex flex-col items-center max-w-md md:max-w-2xl xl:max-w-none mx-auto">
+    <div className="relative w-screen min-h-screen lg:h-screen bg-black overflow-hidden p-4 md:p-8 flex flex-col items-center mx-auto">
       {/* Новый CSS-анимированный звёздный фон */}
       <div className="absolute inset-0 z-0">
         <div className="stars-layer"></div>
@@ -149,7 +149,9 @@ export default function SpaceJumpMainMenu() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-20 flex flex-col bg-black/70 backdrop-blur-lg"
+            className={`absolute inset-0 z-20 flex flex-col ${
+              screen === "free" ? "bg-black" : "bg-black/70 backdrop-blur-lg"
+            }`}
           >
             <div className="flex justify-between items-center px-4 md:px-8 pt-4 md:pt-8">
               <button
@@ -165,8 +167,12 @@ export default function SpaceJumpMainMenu() {
               <span className="w-12 h-12" />
             </div>
             <div className="flex grow items-center justify-center z-20">
-              <div className="w-full max-w-md">
-                <h2 className="text-center text-white text-2xl mb-4">{titles[screen]}</h2>
+              <div className={`w-full ${screen === "free" ? "h-full" : "max-w-md"}`}>
+                {screen !== "free" && (
+                  <h2 className="text-center text-white text-2xl mb-4">
+                    {titles[screen]}
+                  </h2>
+                )}
                 <ScreenContent />
               </div>
             </div>
