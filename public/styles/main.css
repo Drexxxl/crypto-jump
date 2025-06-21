@@ -58,7 +58,7 @@ body {
   height: 150px;
   margin: 40px auto 20px;
   border-radius: 50%;
-  background: #00e5ff;
+  background: radial-gradient(circle at 30% 30%, #00e5ff, #006064);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -73,10 +73,19 @@ body {
 .play-btn {
   background: #fff;
   color: #000;
-  padding: 10px 20px;
-  border-radius: 20px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-decoration: none;
   font-weight: bold;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
+  transition: box-shadow 0.3s;
+}
+.play-btn:hover {
+  box-shadow: 0 0 20px rgba(0, 229, 255, 1);
 }
 
 .modes {
@@ -90,10 +99,11 @@ body {
   width: 80px;
   height: 80px;
   border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
 }
-.turquoise { background: #1de9b6; }
-.gold { background: #ffd600; }
-.purple { background: #d500f9; }
+.turquoise { background: linear-gradient(#1de9b6, #1dc4b0); }
+.gold { background: linear-gradient(#ffd600, #d4b500); }
+.purple { background: linear-gradient(#d500f9, #9c27b0); }
 
 .bottom-info {
   text-align: center;
@@ -123,16 +133,33 @@ body {
   background: rgba(0, 0, 0, 0.5);
   padding: 10px 0;
 }
-.bottom-nav span { font-size: 1.5rem; }
 .bottom-nav a {
-  font-size: 1.5rem;
-  color: inherit;
   text-decoration: none;
+  color: inherit;
+}
+.bottom-nav a img {
+  width: 28px;
+  height: 28px;
+  opacity: 0.7;
+}
+.bottom-nav a.active img {
+  opacity: 1;
+  filter: drop-shadow(0 0 6px #00e5ff);
 }
 
 .top-right a.icon {
   color: inherit;
   text-decoration: none;
+}
+.top-right a.icon img, .energy img {
+  width: 24px;
+  height: 24px;
+}
+.inline-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 4px;
 }
 
 .menu-list {
