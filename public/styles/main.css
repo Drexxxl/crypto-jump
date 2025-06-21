@@ -62,3 +62,9 @@ body,html{height:100%;overflow:hidden;color:var(--text);font-family:var(--font);
 .nav-item{background:none;border:none;cursor:pointer;filter:grayscale(1);opacity:.6;transition:.2s}
 .nav-item.active,.nav-item:hover{filter:grayscale(0);opacity:1}
 .nav-item img{width:28px;height:28px}
+
+/* Layout helpers */
+.hud-right{display:flex;gap:10px}
+.page-container{padding:100px 20px 80px;text-align:center}
+.inline-icon{width:24px;height:24px;vertical-align:middle;margin-right:6px}
+.bottom-nav a.nav-item{text-decoration:none;display:inline-block}
