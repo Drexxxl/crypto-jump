@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>SpaceJump</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
+</head>
+<body>
+    <div id="game"></div>
+    <script src="src/main.js"></script>
+    <script>
+        if (window.Telegram && Telegram.WebApp) {
+            Telegram.WebApp.ready();
+            Telegram.WebApp.expand();
+            if (Telegram.WebApp.isVersionAtLeast && Telegram.WebApp.isVersionAtLeast('6.9')) {
+                Telegram.WebApp.setViewportStable && Telegram.WebApp.setViewportStable(true);
+            }
+        }
+    </script>
+</body>
+</html>
