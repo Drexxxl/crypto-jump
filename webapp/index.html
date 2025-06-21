@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Jump</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{--tg-bg-color:#fff;--tg-text-color:#000;--tg-hint-color:#888;--tg-link-color:#2ea6ff;--tg-button-color:#50a8eb;--tg-button-text-color:#fff;--tg-secondary-bg-color:#f1f1f1;}
+body{background:var(--tg-bg-color);color:var(--tg-text-color);} 
+.btn-primary{background:var(--tg-button-color);color:var(--tg-button-text-color);} 
+</style>
+</head>
+<body class="flex flex-col justify-center items-center h-screen text-center gap-6">
+<h1 class="text-3xl font-bold">🚀 Crypto Jump</h1>
+<p class="text-lg font-medium">Следи за криптопортфелем без лишних кликов</p>
+<div class="flex items-center gap-3 p-4 rounded-2xl shadow backdrop-blur w-60" style="background:var(--tg-secondary-bg-color)">
+<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 10l10-6 10 6v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"/><path d="M12 22V12"/></svg>
+<span>Баланс</span><span class="ml-auto">$-123 456</span>
+</div>
+<button class="btn-primary w-60 py-2 rounded-xl" onclick="tg.openTelegramLink('https://t.me/')">Открыть портфель</button>
+<nav class="fixed bottom-0 inset-x-0 flex justify-around py-3" style="background:var(--tg-secondary-bg-color)">
+<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h6v16H4zM14 9h6v11h-6z"/></svg>
+<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a7.5 7.5 0 0 0 0-6M4.6 15a7.5 7.5 0 0 1 0-6M9 19.4a7.5 7.5 0 0 0 6 0M9 4.6a7.5 7.5 0 0 1 6 0"/></svg>
+</nav>
+<script src="app.js"></script>
+</body>
+</html>
