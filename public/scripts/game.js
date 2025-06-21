@@ -12,7 +12,8 @@ const loadingEl = document.getElementById('loading');
 const BASE_WIDTH = 360;
 const BASE_HEIGHT = 640;
 const MAX_GAP_RATIO = 0.15; // max distance between platforms relative to screen
-let MIN_PLATFORMS = Math.ceil(window.innerHeight / 100); // minimum number of platforms visible
+let MAX_GAP_PX = window.innerHeight * MAX_GAP_RATIO;
+let MIN_PLATFORMS = Math.ceil(window.innerHeight / 80); // minimum number of platforms visible
 let scale = 1;
 
 function resizeGame() {
@@ -21,6 +22,7 @@ function resizeGame() {
   const scaleX = canvas.width / BASE_WIDTH;
   const scaleY = canvas.height / BASE_HEIGHT;
   scale = Math.min(scaleX, scaleY);
+  MAX_GAP_PX = canvas.height * MAX_GAP_RATIO;
 }
 
 resizeGame();
@@ -52,6 +54,17 @@ let rocketStartTime = 0;
 let springStartTime = 0;
 const boostDuration = 5000; // ms
 const stars = [];
+
+function checkJumpable() {
+  platforms.sort((a, b) => b.y - a.y);
+  for (let i = 0; i < platforms.length - 1; i++) {
+    while (platforms[i].y - platforms[i + 1].y > MAX_GAP_PX) {
+      const newY = platforms[i].y - MAX_GAP_PX;
+      platforms.push(createPlatform(newY));
+      platforms.sort((a, b) => b.y - a.y);
+    }
+  }
+}
 
 function initStars() {
   stars.length = 0;
@@ -102,7 +115,7 @@ function createPlatform(y) {
 
 function resetGame() {
   resizeGame();
-  MIN_PLATFORMS = Math.ceil(canvas.height / 100);
+  MIN_PLATFORMS = Math.ceil(canvas.height / 80);
   player.width = 30 * scale;
   player.height = 30 * scale;
   player.jump = -6 * scale;
@@ -111,7 +124,7 @@ function resetGame() {
   player.dy = 0;
   platforms = [];
   score = 0;
-  platformGap = Math.min(50 * scale, canvas.height * MAX_GAP_RATIO);
+  platformGap = Math.min(50 * scale, MAX_GAP_PX);
   hasShield = false;
   rocketActive = false;
   springActive = false;
@@ -138,6 +151,7 @@ function resetGame() {
   for (let i = 1; i <= initialCount; i++) {
     platforms.push(createPlatform(startY - i * platformGap));
   }
+  checkJumpable();
   scoreEl.textContent = 'Score: 0';
   shieldUI.style.display = 'none';
 }
@@ -145,6 +159,7 @@ function resetGame() {
 function update() {
   const diff = difficulty();
   const scrollSpeed = 1 + diff;
+  const now = performance.now();
 
   stars.forEach(s => {
     s.y += s.speed * scrollSpeed;
@@ -169,7 +184,7 @@ function update() {
     player.y = scrollPoint;
     platforms.forEach(p => (p.y += dy));
     score += Math.floor(dy);
-    platformGap = Math.min((50 + diff * 30) * scale, canvas.height * MAX_GAP_RATIO);
+    platformGap = Math.min((50 + diff * 30) * scale, MAX_GAP_PX);
   }
 
   let minY = Math.min(...platforms.map(p => p.y));
@@ -194,18 +209,18 @@ function update() {
         let bounce = player.jump;
         if (p.boost === 'spring') {
           springActive = true;
-          springStartTime = performance.now();
+          springStartTime = now;
         }
         if (p.boost === 'rocket') {
           rocketActive = true;
-          rocketStartTime = performance.now();
+          rocketStartTime = now;
         }
         if (springActive) bounce = player.jump * 0.75;
         if (rocketActive) bounce = player.jump * 2;
         player.dy = bounce;
         if (p.boost === 'shield') {
           hasShield = true;
-          shieldStartTime = performance.now();
+          shieldStartTime = now;
         }
       }
       p.boost = null;
@@ -243,14 +258,14 @@ function update() {
     }
   }
 
-  if (hasShield && performance.now() - shieldStartTime > boostDuration) {
+  if (hasShield && now - shieldStartTime > boostDuration) {
     hasShield = false;
   }
-  if (springActive && performance.now() - springStartTime > boostDuration) {
+  if (springActive && now - springStartTime > boostDuration) {
     springActive = false;
   }
   if (rocketActive) {
-    if (performance.now() - rocketStartTime > boostDuration) {
+    if (now - rocketStartTime > boostDuration) {
       rocketActive = false;
     } else {
       player.dy = player.jump * 2;
@@ -387,9 +402,6 @@ function startGame() {
   startBtn.style.display = 'none';
   gameOverEl.style.display = 'none';
   restartBtn.style.display = 'none';
-  if (window.Telegram && Telegram.WebApp && Telegram.WebApp.requestFullscreen) {
-    Telegram.WebApp.requestFullscreen();
-  }
   resetGame();
   gameState = 'playing';
   loop();
@@ -454,7 +466,7 @@ function handleResize() {
   const prevW = canvas.width;
   const prevH = canvas.height;
   resizeGame();
-  MIN_PLATFORMS = Math.ceil(canvas.height / 100);
+  MIN_PLATFORMS = Math.ceil(canvas.height / 80);
   const ratioX = canvas.width / prevW;
   const ratioY = canvas.height / prevH;
 
@@ -471,13 +483,14 @@ function handleResize() {
     p.height = 10 * scale;
   });
 
-  platformGap = Math.min(platformGap * ratioY, canvas.height * MAX_GAP_RATIO);
+  platformGap = Math.min(platformGap * ratioY, MAX_GAP_PX);
   let minY = Math.min(...platforms.map(pl => pl.y));
   const needed = Math.max(MIN_PLATFORMS, Math.ceil(canvas.height / platformGap));
   while (platforms.length < needed) {
     platforms.push(createPlatform(minY - platformGap));
     minY = Math.min(...platforms.map(pl => pl.y));
   }
+  checkJumpable();
 }
 
 window.addEventListener('resize', handleResize);
