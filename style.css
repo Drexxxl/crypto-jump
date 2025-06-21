@@ -1,17 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
+:root {
+  --color-bg: #000;
+  --color-accent: #1e90ff;
+  --color-text: #fff;
+}
+
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
   font-family: 'Orbitron', Arial, Helvetica, sans-serif;
-  color: #fff;
-  background: #000;
+  color: var(--color-text);
+  background: linear-gradient(var(--color-bg), #01040c);
   overflow: hidden;
 }
 
-#stars {
+#stars,
+#stars::after {
+  content: "";
   position: fixed;
   top: 0;
   left: 0;
@@ -22,15 +30,22 @@ html, body {
     radial-gradient(2px 2px at 20% 30%, #fff, rgba(255, 255, 255, 0)),
     radial-gradient(2px 2px at 80% 70%, #fff, rgba(255, 255, 255, 0)),
     radial-gradient(2px 2px at 60% 40%, #fff, rgba(255, 255, 255, 0)),
-    radial-gradient(2px 2px at 10% 80%, #fff, rgba(255, 255, 255, 0));
+    radial-gradient(2px 2px at 10% 80%, #fff, rgba(255, 255, 255, 0)),
+    radial-gradient(1px 1px at 30% 90%, #fff, rgba(255, 255, 255, 0)),
+    radial-gradient(1px 1px at 70% 20%, #fff, rgba(255, 255, 255, 0));
   background-size: 3px 3px;
   animation: twinkle 8s linear infinite;
   z-index: -1;
 }
 
+#stars::after {
+  animation-duration: 12s;
+  opacity: 0.6;
+}
+
 @keyframes twinkle {
-  from { transform: translateY(0); }
-  to { transform: translateY(-200px); }
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-200px); opacity: .5; }
 }
 
 .menu-ui {
@@ -46,18 +61,25 @@ header {
   justify-content: space-between;
   width: 90%;
   margin-top: 10px;
+  filter: drop-shadow(0 0 4px var(--color-accent));
 }
 
 .currency {
   font-weight: bold;
   font-size: 1.4rem;
+  color: var(--color-accent);
 }
 
 #settings {
   background: none;
   border: none;
-  color: #fff;
+  color: var(--color-text);
   font-size: 1.5rem;
+  transition: color .3s;
+}
+
+#settings:hover {
+  color: var(--color-accent);
 }
 
 main {
@@ -71,22 +93,24 @@ main {
 h1 {
   margin: 0 0 20px;
   font-size: 2.5rem;
+  text-shadow: 0 0 10px var(--color-accent);
 }
 
 #play {
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  background: #1e90ff;
-  color: #fff;
+  background: linear-gradient(135deg, var(--color-accent), #3a9dfd);
+  color: var(--color-text);
   font-size: 1.4rem;
   border: none;
-  box-shadow: 0 0 30px #1e90ff;
-  transition: transform .2s ease;
+  box-shadow: 0 0 30px var(--color-accent);
+  transition: transform .2s ease, box-shadow .2s;
 }
 
 #play:hover {
   transform: scale(1.05);
+  box-shadow: 0 0 40px var(--color-accent);
 }
 
 nav {
@@ -94,18 +118,25 @@ nav {
   justify-content: space-around;
   width: 100%;
   padding: 10px 0;
-  background: rgba(0, 0, 0, .5);
+  background: rgba(0, 0, 0, .4);
+  backdrop-filter: blur(5px);
 }
 
 nav a {
   color: #bbb;
   text-decoration: none;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
+  transition: color .2s, transform .2s;
+}
+
+nav a:hover {
+  color: var(--color-text);
+  transform: scale(1.1);
 }
 
 nav a.active {
-  color: #fff;
-  border-top: 2px solid #fff;
+  color: var(--color-accent);
+  border-top: 2px solid var(--color-accent);
 }
 
 canvas {
@@ -117,4 +148,8 @@ canvas {
   top: 10px;
   left: 10px;
   font-size: 1.2rem;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  backdrop-filter: blur(3px);
 }
