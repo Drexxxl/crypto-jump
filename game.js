@@ -7,12 +7,21 @@ let gameRunning = false;
 let rocket;
 let platforms = [];
 let keys = {};
+let ground;
 const GRAVITY = 0.4;
+const GROUND_HEIGHT = 20;
 
 function init() {
-  rocket = { x: 180, y: 500, width: 40, height: 40, vy: 0 };
+  ground = { x: 0, y: canvas.height - GROUND_HEIGHT, width: canvas.width, height: GROUND_HEIGHT };
+  rocket = {
+    x: canvas.width / 2 - 20,
+    y: ground.y - 40,
+    width: 40,
+    height: 40,
+    vy: 0
+  };
   platforms = [];
-  let y = 550;
+  let y = ground.y - 50;
   for (let i = 0; i < 7; i++) {
     platforms.push({ x: Math.random() * 340, y: y, width: 60, height: 10 });
     y -= 80;
@@ -41,8 +50,18 @@ function update() {
     if (rocket.x > canvas.width) rocket.x = -rocket.width;
   }
 
-  // collision with platforms
+  // collision with ground and platforms
   if (rocket.vy > 0) {
+    // ground
+    if (
+      rocket.x + rocket.width > ground.x &&
+      rocket.x < ground.x + ground.width &&
+      rocket.y + rocket.height > ground.y &&
+      rocket.y + rocket.height < ground.y + ground.height + rocket.vy
+    ) {
+      rocket.vy = -10;
+    }
+    // platforms
     platforms.forEach(p => {
       if (
         rocket.x + rocket.width > p.x &&
@@ -78,6 +97,9 @@ function update() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // draw ground
+  ctx.fillStyle = '#444';
+  ctx.fillRect(ground.x, ground.y, ground.width, ground.height);
   // draw platforms
   ctx.fillStyle = '#0f0';
   platforms.forEach(p => {
