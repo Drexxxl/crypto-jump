@@ -49,11 +49,13 @@ canvas {
   border-radius: 4px;
   cursor: pointer;
   font-family: "Courier New", monospace;
+  z-index: 2;
 }
 
 #restartBtn,
 #gameOver {
   display: none;
+  z-index: 2;
 }
 
 
