@@ -158,25 +158,29 @@ export default function SpaceJumpMainMenu() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className={`absolute inset-0 z-20 flex flex-col ${
-              screen === "free" ? "bg-black" : "bg-black/70 backdrop-blur-lg"
+              screen === "free" || screen === "survival"
+                ? "bg-black"
+                : "bg-black/70 backdrop-blur-lg"
             }`}
           >
-            <div className="flex justify-between items-center px-4 md:px-8 pt-4 md:pt-8">
-              <button
-                onClick={() => setScreen("menu")}
-                className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform"
-                aria-label="Назад"
-              >
-                <ChevronLeft className="w-6 h-6 text-white" />
-              </button>
-              <h1 className="text-white text-4xl md:text-5xl font-black tracking-widest">
-                SpaceJump
-              </h1>
-              <span className="w-12 h-12" />
-            </div>
+            {screen !== "free" && screen !== "survival" && (
+              <div className="flex justify-between items-center px-4 md:px-8 pt-4 md:pt-8">
+                <button
+                  onClick={() => setScreen("menu")}
+                  className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform"
+                  aria-label="Назад"
+                >
+                  <ChevronLeft className="w-6 h-6 text-white" />
+                </button>
+                <h1 className="text-white text-4xl md:text-5xl font-black tracking-widest">
+                  SpaceJump
+                </h1>
+                <span className="w-12 h-12" />
+              </div>
+            )}
             <div className="flex grow items-center justify-center z-20">
-              <div className={`w-full ${screen === "free" ? "h-full" : "max-w-md"}`}>
-                {screen !== "free" && (
+              <div className={`w-full ${screen === "free" || screen === "survival" ? "h-full" : "max-w-md"}`}>
+                {screen !== "free" && screen !== "survival" && (
                   <h2 className="text-center text-white text-2xl mb-4">
                     {titles[screen]}
                   </h2>
