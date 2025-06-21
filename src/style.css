@@ -1,0 +1,123 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #000;
+  color: #fff;
+}
+
+.main-menu {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  padding: 1.5rem;
+}
+
+.stars-layer {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at bottom, #0d1b2a 0%, #000 100%);
+  overflow: hidden;
+}
+
+.stars-layer::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+  animation: moveStars 60s linear infinite;
+  opacity: 0.3;
+}
+
+@keyframes moveStars {
+  from { transform: translateY(0); }
+  to { transform: translateY(-1000px); }
+}
+
+.top-bar {
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1.5rem;
+  z-index: 10;
+}
+
+.icon-wrapper {
+  background: rgba(255,255,255,0.1);
+  padding: 0.75rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px #00f6ff, 0 0 20px #00f6ff;
+  transition: transform 0.2s;
+}
+
+.icon-wrapper:hover {
+  transform: scale(1.1);
+}
+
+.game-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 0.2rem;
+}
+
+.play-area {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.play-button {
+  width: 10rem;
+  height: 10rem;
+  border-radius: 9999px;
+  font-size: 3rem;
+  font-weight: 700;
+  background: #fff;
+  color: #000;
+  box-shadow: 0 0 20px #00f6ff, 0 0 40px #00f6ff, 0 0 60px #00f6ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+
+.play-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px #00f6ff, 0 0 60px #00f6ff, 0 0 90px #00f6ff;
+}
+
+.bottom-menu {
+  position: absolute;
+  bottom: 1rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  z-index: 10;
+}
+
+@media (max-width: 480px) {
+  .game-title {
+    font-size: 1.75rem;
+  }
+  .play-button {
+    width: 7rem;
+    height: 7rem;
+    font-size: 2rem;
+  }
+}
+
