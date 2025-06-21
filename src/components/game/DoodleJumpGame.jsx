@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 
-export default function DoodleJumpGame({ onExit }) {
+export default function DoodleJumpGame({ onExit, mode = "free" }) {
   const canvasRef = useRef(null);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
@@ -14,6 +14,11 @@ export default function DoodleJumpGame({ onExit }) {
   const pausedRef = useRef(false);
   const [countdown, setCountdown] = useState(3);
   const countdownRef = useRef(3);
+  const [lives, setLives] = useState(3);
+  const livesRef = useRef(3);
+  const [survivalTime, setSurvivalTime] = useState(0);
+  const startTimeRef = useRef(performance.now());
+  const pauseStartRef = useRef(null);
 
   const coinSound = useRef(null);
 
@@ -41,10 +46,15 @@ export default function DoodleJumpGame({ onExit }) {
 
   const togglePause = () => {
     if (pausedRef.current) {
+      if (pauseStartRef.current) {
+        startTimeRef.current += performance.now() - pauseStartRef.current;
+        pauseStartRef.current = null;
+      }
       startCountdown();
     } else {
       setPaused(true);
       pausedRef.current = true;
+      pauseStartRef.current = performance.now();
     }
   };
 
@@ -54,6 +64,11 @@ export default function DoodleJumpGame({ onExit }) {
     setRestartKey((k) => k + 1);
     setTons(0);
     shieldRef.current = 0;
+    setLives(3);
+    livesRef.current = 3;
+    setSurvivalTime(0);
+    startTimeRef.current = performance.now();
+    pauseStartRef.current = null;
     startCountdown();
   };
 
@@ -73,6 +88,7 @@ export default function DoodleJumpGame({ onExit }) {
       "https://cdn.jsdelivr.net/gh/jwilson8787/100-Sound-effects/Audio/coin1.wav"
     );
     const hintTimer = setTimeout(() => setShowHint(false), 3000);
+    startTimeRef.current = performance.now();
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -152,7 +168,13 @@ export default function DoodleJumpGame({ onExit }) {
         animId = requestAnimationFrame(loop);
         return;
       }
-      const difficulty = 1 + maxHeightRef.current / 2000;
+      if (mode === "survival") {
+        setSurvivalTime(Math.floor((performance.now() - startTimeRef.current) / 1000));
+      }
+      const difficulty =
+        mode === "survival"
+          ? 1 + survivalTime / 30
+          : 1 + maxHeightRef.current / 2000;
       const speed = baseSpeed * difficulty;
       const gravity = baseGravity * difficulty;
       player.vy += gravity;
@@ -216,6 +238,11 @@ export default function DoodleJumpGame({ onExit }) {
 
       if (player.y > canvas.height) {
         if (shieldRef.current > performance.now()) {
+          player.y = canvas.height - 100;
+          player.vy = jumpVy;
+        } else if (livesRef.current > 1) {
+          livesRef.current -= 1;
+          setLives(livesRef.current);
           player.y = canvas.height - 100;
           player.vy = jumpVy;
         } else {
@@ -317,7 +344,11 @@ export default function DoodleJumpGame({ onExit }) {
       });
       ctx.fillStyle = "#fff";
       const heightScore = Math.floor(maxHeightRef.current / 100);
-      ctx.fillText("Score: " + (heightScore + score) + " TON: " + tons, 10, 20);
+      const text =
+        mode === "survival"
+          ? `Time: ${survivalTime}s TON: ${tons}`
+          : `Score: ${heightScore + score} TON: ${tons}`;
+      ctx.fillText(text, 10, 20);
 
       animId = requestAnimationFrame(loop);
     };
@@ -360,8 +391,21 @@ export default function DoodleJumpGame({ onExit }) {
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded">
-            <span>🚀</span>
-            <span className="font-semibold">{totalScore}</span>
+            {mode === "survival" ? (
+              <>
+                <span>⏱</span>
+                <span className="font-semibold">{survivalTime}</span>
+              </>
+            ) : (
+              <>
+                <span>🚀</span>
+                <span className="font-semibold">{totalScore}</span>
+              </>
+            )}
+          </div>
+          <div className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded">
+            <span>❤️</span>
+            <span className="font-semibold">{lives}</span>
           </div>
           <div className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" className="w-4 h-4 fill-current text-cyan-400">
@@ -395,7 +439,11 @@ export default function DoodleJumpGame({ onExit }) {
       {gameOver && (
         <div className="absolute inset-0 flex flex-col items-center justify-center z-20 text-center">
           <p className="text-xl mb-2">Game Over</p>
-          <p className="mb-2">Score: {totalScore} | TON: {tons}</p>
+          {mode === "survival" ? (
+            <p className="mb-2">Time: {survivalTime}s | TON: {tons}</p>
+          ) : (
+            <p className="mb-2">Score: {totalScore} | TON: {tons}</p>
+          )}
           <div className="flex gap-2 justify-center">
             <Button onClick={handleRestart}>Перезапуск</Button>
             <Button onClick={onExit}>В меню</Button>
