@@ -1,0 +1,36 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  background: black;
+  color: white;
+  font-family: sans-serif;
+  overflow: hidden;
+}
+canvas {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#menu {
+  position: absolute;
+  top: 30%;
+  width: 100%;
+  text-align: center;
+}
+#menu h1 {
+  font-size: 3em;
+}
+#menu button {
+  font-size: 2em;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+.links {
+  margin-top: 20px;
+}
+.links a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: underline;
+}
