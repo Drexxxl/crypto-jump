@@ -17,7 +17,23 @@
   will-change: transform;
 }
 
+.stars-layer::after {
+  content: '';
+  position: absolute;
+  width: 300%;
+  height: 300%;
+  background: transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+  animation: scrollStarsSlow 120s linear infinite;
+  opacity: 0.15;
+  will-change: transform;
+}
+
 @keyframes scrollStars {
   from { transform: translateY(0); }
   to { transform: translateY(-1000px); }
+}
+
+@keyframes scrollStarsSlow {
+  from { transform: translateY(0); }
+  to { transform: translateY(-500px); }
 }
