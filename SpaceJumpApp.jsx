@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "https://esm.sh/react@18";
+import { motion, AnimatePresence } from "https://esm.sh/framer-motion@10";
 import {
   Settings,
   Trophy,
@@ -8,8 +8,8 @@ import {
   User,
   Store,
   Gift,
-} from "lucide-react";
-import Phaser from "phaser";
+} from "https://esm.sh/lucide-react@0.270.0";
+import Phaser from "https://esm.sh/phaser@3";
 
 /***************************************************************************
  * SpaceJump – v3.1                                                        *
