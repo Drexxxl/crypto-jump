@@ -9,6 +9,11 @@ export default function DoodleJumpGame({ onExit }) {
   const maxHeightRef = useRef(0);
   const [tons, setTons] = useState(0);
   const shieldRef = useRef(0);
+  const [showHint, setShowHint] = useState(true);
+
+  const coinSound = useRef(null);
+
+  const totalScore = Math.floor(maxHeightRef.current / 100) + score;
 
   const handleRestart = () => {
     setScore(0);
@@ -21,6 +26,11 @@ export default function DoodleJumpGame({ onExit }) {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+
+    coinSound.current = new Audio(
+      "https://cdn.jsdelivr.net/gh/jwilson8787/100-Sound-effects/Audio/coin1.wav"
+    );
+    const hintTimer = setTimeout(() => setShowHint(false), 3000);
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -220,6 +230,10 @@ export default function DoodleJumpGame({ onExit }) {
           coins.splice(i, 1);
           setScore((s) => s + 5);
           setTons((t) => t + 1);
+          if (coinSound.current) {
+            coinSound.current.currentTime = 0;
+            coinSound.current.play().catch(() => {});
+          }
         }
       });
 
@@ -263,6 +277,7 @@ export default function DoodleJumpGame({ onExit }) {
     animId = requestAnimationFrame(loop);
 
     return () => {
+      clearTimeout(hintTimer);
       cancelAnimationFrame(animId);
       window.removeEventListener("keydown", keyDown);
       window.removeEventListener("keyup", keyUp);
@@ -278,17 +293,48 @@ export default function DoodleJumpGame({ onExit }) {
       <div className="absolute inset-0 z-0">
         <div className="stars-layer" />
       </div>
+
+      <div className="absolute top-0 left-0 w-full p-2 sm:p-4 flex justify-between items-center text-xs sm:text-base bg-black/30 backdrop-blur-md border-b border-white/20 z-20">
+        <button
+          title="Back"
+          onClick={onExit}
+          className="rounded-full bg-white/10 p-2 hover:bg-white/20"
+        >
+          ←
+        </button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded">
+            <span>🚀</span>
+            <span className="font-semibold">{totalScore}</span>
+          </div>
+          <div className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" className="w-4 h-4 fill-current text-cyan-400">
+              <circle cx="32" cy="32" r="30" fill="#0098ea" />
+              <path fill="#fff" d="M32 16L16 48h32L32 16z" />
+            </svg>
+            <span className="font-semibold">{tons}</span>
+          </div>
+        </div>
+      </div>
+
+      {showHint && !gameOver && (
+        <div className="absolute bottom-28 sm:bottom-32 left-1/2 -translate-x-1/2 bg-black/50 px-3 py-2 rounded text-xs sm:text-sm z-20">
+          Используйте стрелки или свайпы для перемещения
+        </div>
+      )}
+
       {gameOver && (
-        <div className="mb-4 text-center">
-          <p className="text-xl">Game Over</p>
-          <p className="mb-2">Score: {Math.floor(maxHeightRef.current / 100) + score} | TON: {tons}</p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-20 text-center">
+          <p className="text-xl mb-2">Game Over</p>
+          <p className="mb-2">Score: {totalScore} | TON: {tons}</p>
           <div className="flex gap-2 justify-center">
             <Button onClick={handleRestart}>Перезапуск</Button>
             <Button onClick={onExit}>В меню</Button>
           </div>
         </div>
       )}
-      <canvas ref={canvasRef} className="relative z-10 w-full h-full border border-white block" />
+
+      <canvas ref={canvasRef} className="relative z-10 w-full h-full border border-white/20 rounded-md" />
       <style>{`
         .stars-layer {
           position: absolute;
