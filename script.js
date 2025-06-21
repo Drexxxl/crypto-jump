@@ -132,11 +132,12 @@ class Game {
     const r = this.rocket;
     const grad = this.ctx.createLinearGradient(r.x, r.y, r.x, r.y + r.height);
     grad.addColorStop(0, '#fff');
-    grad.addColorStop(1, '#888');
+    grad.addColorStop(0.5, '#00ffe1');
+    grad.addColorStop(1, '#9c27b0');
     this.ctx.fillStyle = grad;
     this.ctx.fillRect(r.x, r.y, r.width, r.height);
 
-    this.ctx.fillStyle = '#eee';
+    this.ctx.fillStyle = '#00ffe1';
     this.ctx.beginPath();
     this.ctx.moveTo(r.x, r.y);
     this.ctx.lineTo(r.x + r.width / 2, r.y - 20);
@@ -173,14 +174,14 @@ class Game {
     this.platforms.forEach(p => {
       const grad = this.ctx.createLinearGradient(p.x, p.y, p.x, p.y + p.height);
       if (p.type === 'breakable') {
-        grad.addColorStop(0, '#f55');
-        grad.addColorStop(1, '#a00');
+        grad.addColorStop(0, '#ff7070');
+        grad.addColorStop(1, '#b03030');
       } else if (p.type === 'moving') {
-        grad.addColorStop(0, '#0ff');
-        grad.addColorStop(1, '#09c');
+        grad.addColorStop(0, '#00ffe1');
+        grad.addColorStop(1, '#009fa0');
       } else {
-        grad.addColorStop(0, '#0f0');
-        grad.addColorStop(1, '#090');
+        grad.addColorStop(0, '#2aff2a');
+        grad.addColorStop(1, '#0a0');
       }
       this.ctx.fillStyle = grad;
       this.ctx.fillRect(p.x, p.y, p.width, p.height);

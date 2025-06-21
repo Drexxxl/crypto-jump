@@ -1,9 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;500&display=swap');
 
 :root {
-  --color-bg: #000;
-  --color-accent: #1e90ff;
-  --color-text: #fff;
+  --color-bg: #010101;
+  --color-accent: #00ffe1;
+  --color-accent-secondary: #9c27b0;
+  --color-text: #fefefe;
+  --color-text-secondary: #cfcfcf;
 }
 
 html, body {
@@ -11,9 +13,9 @@ html, body {
   padding: 0;
   width: 100%;
   height: 100%;
-  font-family: 'Orbitron', Arial, Helvetica, sans-serif;
+  font-family: 'Roboto', Arial, Helvetica, sans-serif;
   color: var(--color-text);
-  background: linear-gradient(var(--color-bg), #01040c);
+  background: linear-gradient(var(--color-bg), #090513);
   overflow: hidden;
 }
 
@@ -46,6 +48,11 @@ html, body {
 @keyframes twinkle {
   from { transform: translateY(0); opacity: 1; }
   to { transform: translateY(-200px); opacity: .5; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 30px var(--color-accent); }
+  50% { transform: scale(1.05); box-shadow: 0 0 40px var(--color-accent); }
 }
 
 .menu-ui {
@@ -93,6 +100,7 @@ main {
 h1 {
   margin: 0 0 20px;
   font-size: 2.5rem;
+  font-family: 'Orbitron', sans-serif;
   text-shadow: 0 0 10px var(--color-accent);
 }
 
@@ -100,11 +108,12 @@ h1 {
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-accent), #3a9dfd);
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-secondary));
   color: var(--color-text);
   font-size: 1.4rem;
   border: none;
   box-shadow: 0 0 30px var(--color-accent);
+  animation: pulse 3s infinite;
   transition: transform .2s ease, box-shadow .2s;
 }
 
@@ -123,20 +132,20 @@ nav {
 }
 
 nav a {
-  color: #bbb;
+  color: var(--color-text-secondary);
   text-decoration: none;
   font-size: 1.6rem;
   transition: color .2s, transform .2s;
 }
 
 nav a:hover {
-  color: var(--color-text);
+  color: var(--color-accent);
   transform: scale(1.1);
 }
 
 nav a.active {
-  color: var(--color-accent);
-  border-top: 2px solid var(--color-accent);
+  color: var(--color-accent-secondary);
+  border-top: 2px solid var(--color-accent-secondary);
 }
 
 canvas {
@@ -148,6 +157,7 @@ canvas {
   top: 10px;
   left: 10px;
   font-size: 1.2rem;
+  font-family: 'Orbitron', sans-serif;
   padding: 6px 10px;
   background: rgba(0, 0, 0, 0.5);
   border-radius: 8px;
@@ -155,6 +165,10 @@ canvas {
 }
 .scoreboard span + span {
   margin-left: 10px;
+}
+
+.secondary-text {
+  color: var(--color-text-secondary);
 }
 
 .boost-ready {
@@ -174,6 +188,7 @@ canvas {
   align-items: center;
   color: var(--color-text);
   text-align: center;
+  font-family: 'Orbitron', sans-serif;
 }
 
 .overlay.hidden {
@@ -186,7 +201,13 @@ canvas {
   font-size: 1.2rem;
   border: none;
   border-radius: 8px;
-  background: var(--color-accent);
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-secondary));
   color: var(--color-text);
+  box-shadow: 0 0 20px var(--color-accent);
   cursor: pointer;
+  transition: transform .2s;
+}
+
+.overlay button:hover {
+  transform: scale(1.05);
 }
