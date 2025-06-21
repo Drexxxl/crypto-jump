@@ -12,14 +12,40 @@ export default function DoodleJumpGame({ onExit }) {
   const [showHint, setShowHint] = useState(true);
   const [paused, setPaused] = useState(false);
   const pausedRef = useRef(false);
+  const [countdown, setCountdown] = useState(3);
+  const countdownRef = useRef(3);
 
   const coinSound = useRef(null);
 
   const totalScore = Math.floor(maxHeightRef.current / 100) + score;
 
+  const startCountdown = () => {
+    setCountdown(3);
+    countdownRef.current = 3;
+    setPaused(true);
+    pausedRef.current = true;
+  };
+
+  useEffect(() => {
+    countdownRef.current = countdown;
+    if (countdown === null) return;
+    if (countdown === 0) {
+      setCountdown(null);
+      setPaused(false);
+      pausedRef.current = false;
+      return;
+    }
+    const id = setTimeout(() => setCountdown(countdown - 1), 1000);
+    return () => clearTimeout(id);
+  }, [countdown]);
+
   const togglePause = () => {
-    setPaused((p) => !p);
-    pausedRef.current = !pausedRef.current;
+    if (pausedRef.current) {
+      startCountdown();
+    } else {
+      setPaused(true);
+      pausedRef.current = true;
+    }
   };
 
   const handleRestart = () => {
@@ -28,8 +54,7 @@ export default function DoodleJumpGame({ onExit }) {
     setRestartKey((k) => k + 1);
     setTons(0);
     shieldRef.current = 0;
-    setPaused(false);
-    pausedRef.current = false;
+    startCountdown();
   };
 
   useEffect(() => {
@@ -116,13 +141,14 @@ export default function DoodleJumpGame({ onExit }) {
     window.addEventListener("touchstart", onTouchStart);
     window.addEventListener("touchmove", onTouchMove);
     window.addEventListener("touchend", onTouchEnd);
-
     let animId;
+
+    startCountdown();
     const baseSpeed = 5;
     const jumpVy = -8;
     const baseGravity = 0.2;
     const loop = () => {
-      if (pausedRef.current) {
+      if (pausedRef.current || countdownRef.current !== null) {
         animId = requestAnimationFrame(loop);
         return;
       }
@@ -357,6 +383,12 @@ export default function DoodleJumpGame({ onExit }) {
         <div className="absolute inset-0 flex flex-col items-center justify-center z-20 bg-black/60 text-center">
           <p className="text-xl mb-4">Пауза</p>
           <Button onClick={togglePause}>Продолжить</Button>
+        </div>
+      )}
+
+      {countdown !== null && (
+        <div className="absolute inset-0 flex items-center justify-center z-30 bg-black/70 text-6xl font-bold">
+          {countdown}
         </div>
       )}
 
