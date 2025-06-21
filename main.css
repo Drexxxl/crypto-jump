@@ -1,0 +1,121 @@
+body {
+  margin: 0;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+  overflow: hidden;
+}
+
+.space {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='3'%3E%3Ccircle cx='1.5' cy='1.5' r='1.5' fill='white'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  opacity: 0.3;
+  animation: moveSpace 60s linear infinite;
+  z-index: -1;
+}
+
+@keyframes moveSpace {
+  from { transform: translate(0, 0); }
+  to { transform: translate(50%, 50%); }
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.energy, .top-right { display: flex; align-items: center; }
+.top-right { gap: 10px; }
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #444;
+  position: relative;
+}
+.avatar-indicator {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: red;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  padding: 2px 4px;
+}
+
+.center-sphere {
+  width: 150px;
+  height: 150px;
+  margin: 40px auto 20px;
+  border-radius: 50%;
+  background: #00e5ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 3s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.play-btn {
+  background: #fff;
+  color: #000;
+  padding: 10px 20px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.modes {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.mode {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+}
+.turquoise { background: #1de9b6; }
+.gold { background: #ffd600; }
+.purple { background: #d500f9; }
+
+.bottom-info {
+  text-align: center;
+  margin-top: 30px;
+}
+.progress {
+  width: 80%;
+  height: 10px;
+  background: #333;
+  margin: 10px auto 0;
+  border-radius: 5px;
+}
+.progress-bar {
+  width: 40%;
+  height: 100%;
+  background: #00e5ff;
+  border-radius: 5px;
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px 0;
+}
+.bottom-nav span { font-size: 1.5rem; }
