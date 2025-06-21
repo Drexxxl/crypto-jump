@@ -42,7 +42,7 @@ let player = {
 let platforms = [];
 let score = 0;
 let keys = { left: false, right: false };
-let platformGap = 60;
+let platformGap = 50;
 let hasShield = false;
 let rocketActive = false;
 let shieldStartTime = 0;
@@ -107,7 +107,8 @@ function resetGame() {
   player.dy = 0;
   platforms = [];
   score = 0;
-  platformGap = 60 * scale;
+  const heightRatio = canvas.height / BASE_HEIGHT;
+  platformGap = 50 * heightRatio;
   hasShield = false;
   rocketActive = false;
   shieldStartTime = 0;
@@ -128,7 +129,8 @@ function resetGame() {
     used: false,
     dx: 0
   });
-  for (let i = 1; i < 10; i++) {
+  const initialCount = Math.ceil(canvas.height / platformGap);
+  for (let i = 1; i <= initialCount; i++) {
     platforms.push(createPlatform(startY - i * platformGap));
   }
   scoreEl.textContent = 'Score: 0';
@@ -162,7 +164,8 @@ function update() {
     player.y = scrollPoint;
     platforms.forEach(p => (p.y += dy));
     score += Math.floor(dy);
-    platformGap = Math.min(60 + diff * 40, maxGapY) * scale;
+    const heightRatio = canvas.height / BASE_HEIGHT;
+    platformGap = Math.min(50 + diff * 30, maxGapY) * heightRatio;
   }
 
   let minY = Math.min(...platforms.map(p => p.y));
@@ -363,18 +366,27 @@ function endGame() {
   }
 }
 
-startBtn.addEventListener('click', () => {
+function startGame() {
   if (gameState === 'playing') return;
   startBtn.style.display = 'none';
   gameOverEl.style.display = 'none';
   restartBtn.style.display = 'none';
+  if (window.Telegram && Telegram.WebApp && Telegram.WebApp.expand) {
+    Telegram.WebApp.expand();
+  }
   resetGame();
   gameState = 'playing';
   loop();
-});
+}
+
+startBtn.addEventListener('click', startGame);
+startBtn.addEventListener('pointerdown', startGame);
 
 restartBtn.addEventListener('click', () => {
-  startBtn.dispatchEvent(new Event('click'));
+  startGame();
+});
+restartBtn.addEventListener('pointerdown', () => {
+  startGame();
 });
 
 document.addEventListener('keydown', e => {
