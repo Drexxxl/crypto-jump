@@ -4,6 +4,7 @@ body {
   background-color: #0b0f1a;
   font-family: "Courier New", monospace;
   color: #00e5ff;
+  font-size: calc(10px + 1vmin);
 }
 canvas {
   display: block;
@@ -29,6 +30,7 @@ canvas {
   border-radius: 4px;
   pointer-events: none;
   font-family: "Courier New", monospace;
+  font-size: 1rem;
 }
 
 #startBtn,
@@ -38,7 +40,7 @@ canvas {
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 10px 20px;
-  font-size: 18px;
+  font-size: 1.6rem;
   background: #00e5ff;
   color: #0b0f1a;
   border: none;
@@ -52,27 +54,6 @@ canvas {
   display: none;
 }
 
-#controls {
-  position: absolute;
-  bottom: 10px;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 40px;
-  pointer-events: none;
-}
-
-#controls button {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(0, 229, 255, 0.3);
-  color: #00e5ff;
-  font-size: 32px;
-  opacity: 0.6;
-  pointer-events: auto;
-}
 
 #loading {
   position: absolute;
@@ -84,7 +65,7 @@ canvas {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 2rem;
   color: #ffea00;
   font-family: "Courier New", monospace;
 }
