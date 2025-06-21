@@ -1,16 +1,193 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SpaceJump</title>
-  <link rel="stylesheet" href="style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --accent: #00d9ff;
+      --bg-start: #02030d;
+      --bg-end: #000;
+      --glass: rgba(255, 255, 255, 0.05);
+    }
+    * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--bg-end);
+      font-family: 'Russo One', sans-serif;
+      color: #fff;
+      overflow: hidden;
+    }
+    #gameCanvas {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(var(--bg-start), var(--bg-end));
+    }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: .8;
+      animation: fall 6s linear infinite;
+    }
+    @keyframes fall {
+      from { transform: translateY(-2vh); }
+      to { transform: translateY(102vh); opacity: 0; }
+    }
+    #top-bar {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+    }
+    #currency {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--glass);
+      backdrop-filter: blur(8px);
+      border-radius: 9999px;
+      font-size: .9rem;
+    }
+    #settings-btn {
+      all: unset;
+      cursor: pointer;
+      font-size: 1.6rem;
+      color: #fff;
+      transition: transform .2s;
+    }
+    #settings-btn:hover {
+      transform: rotate(90deg);
+    }
+    #main-menu {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: radial-gradient(circle at center, rgba(0, 0, 0, .92) 0%, rgba(0, 0, 0, .6) 60%, transparent 90%);
+    }
+    #logo {
+      font-size: 3.5rem;
+      color: var(--accent);
+      text-shadow: 0 0 25px var(--accent);
+      margin-bottom: 60px;
+    }
+    #play-btn {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #0c0f14 0%, #000 75%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 45px var(--accent);
+      cursor: pointer;
+      transition: transform .25s;
+    }
+    #play-btn:hover {
+      transform: scale(1.08);
+    }
+    #play-btn svg {
+      width: 70px;
+      fill: #fff;
+    }
+    #rocket-flame {
+      position: absolute;
+      width: 50px;
+      height: 70px;
+      bottom: 150px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+    #links {
+      margin-top: 46px;
+      font-size: .95rem;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    #links a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    #links a:hover {
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
-  <div id="menu">
-    <button onclick="startGame()">🚀 Играть</button>
+  <canvas id="gameCanvas"></canvas>
+  <script>
+    for(let i = 0; i < 150; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      s.style.left = Math.random() * 100 + '%';
+      s.style.top = Math.random() * -100 + 'vh';
+      s.style.animationDuration = 4 + Math.random() * 4 + 's';
+      document.body.appendChild(s);
+    }
+  </script>
+
+  <div id="top-bar">
+    <div id="currency"><i class="ri-coins-line"></i> 906</div>
+    <button id="settings-btn" onclick="toggleSettings()"><i class="ri-settings-4-line"></i></button>
   </div>
-  <canvas id="game"></canvas>
-  <script src="game.js"></script>
+
+  <div id="main-menu">
+    <h1 id="logo">SpaceJump</h1>
+    <div id="play-btn" onclick="startGame()">
+      <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
+    </div>
+    <div id="links">
+      <a href="#"><i class="ri-rocket-2-fill"></i> Бот</a>
+      <a href="#"><i class="ri-megaphone-fill"></i> Канал</a>
+      <a href="#"><i class="ri-chat-4-fill"></i> Чат</a>
+    </div>
+  </div>
+
+  <img id="rocket-flame" src="assets/rocket-fire.gif" style="display:none" />
+
+  <!-- Audio -->
+  <audio id="audio-start" src="assets/start.mp3"></audio>
+  <audio id="audio-jump" src="assets/jump.mp3"></audio>
+  <audio id="audio-coin" src="assets/coin.mp3"></audio>
+  <audio id="audio-over" src="assets/gameover.mp3"></audio>
+
+  <script>
+    const flame = document.getElementById('rocket-flame');
+    function toggleSettings() {
+      alert("Окно настроек (в процессе)");
+    }
+
+    function startGame() {
+      document.getElementById('main-menu').style.display = 'none';
+      flame.style.display = 'block';
+      document.getElementById('audio-start').play();
+    }
+  </script>
 </body>
 </html>
