@@ -181,29 +181,6 @@ export default function SpaceJumpMainMenu() {
       </AnimatePresence>
 
       <style>{`
-        .stars-layer {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          background: radial-gradient(ellipse at bottom, #0d1b2a 0%, #000000 100%);
-          overflow: hidden;
-        }
-        .stars-layer::before {
-          content: '';
-          position: absolute;
-          width: 200%;
-          height: 200%;
-          background: transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
-          animation: moveStars 90s linear infinite;
-          opacity: 0.3;
-          will-change: transform;
-        }
-
-        @keyframes moveStars {
-          from { transform: translateY(0); }
-          to { transform: translateY(-1000px); }
-        }
-
         .neon-button {
           box-shadow: 0 0 20px #8b5cf6, 0 0 40px #3b82f6, 0 0 60px #06b6d4;
           transition: box-shadow 0.3s ease;
