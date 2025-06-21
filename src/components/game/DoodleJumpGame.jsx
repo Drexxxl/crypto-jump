@@ -274,7 +274,10 @@ export default function DoodleJumpGame({ onExit }) {
   }, [restartKey]);
 
   return (
-    <div className="text-white flex flex-col items-center justify-center w-screen h-screen">
+    <div className="relative text-white flex flex-col items-center justify-center w-screen h-screen overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <div className="stars-layer" />
+      </div>
       {gameOver && (
         <div className="mb-4 text-center">
           <p className="text-xl">Game Over</p>
@@ -285,7 +288,29 @@ export default function DoodleJumpGame({ onExit }) {
           </div>
         </div>
       )}
-      <canvas ref={canvasRef} className="w-full h-full border border-white block" />
+      <canvas ref={canvasRef} className="relative z-10 w-full h-full border border-white block" />
+      <style>{`
+        .stars-layer {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          background: radial-gradient(ellipse at bottom, #0d1b2a 0%, #000000 100%);
+          overflow: hidden;
+        }
+        .stars-layer::before {
+          content: '';
+          position: absolute;
+          width: 200%;
+          height: 200%;
+          background: transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+          animation: scrollStars 60s linear infinite;
+          opacity: 0.3;
+        }
+        @keyframes scrollStars {
+          from { transform: translateY(0); }
+          to { transform: translateY(-1000px); }
+        }
+      `}</style>
     </div>
   );
 }
