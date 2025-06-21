@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 let width = canvas.width = window.innerWidth;
 let height = canvas.height = window.innerHeight;
 
-const rocket = { x: width / 2 - 20, y: height - 60, vy: 0, width: 40, height: 60 };
+const rocket = { x: width / 2 - 20, y: height - 80, vy: 0, width: 40, height: 60 };
 const gravity = 0.4;
 const jumpVelocity = -10;
 let platforms = [];
@@ -24,22 +24,53 @@ function initPlatforms() {
 }
 
 function drawRocket() {
-  ctx.fillStyle = '#fff';
+  const grad = ctx.createLinearGradient(rocket.x, rocket.y, rocket.x, rocket.y + rocket.height);
+  grad.addColorStop(0, '#fff');
+  grad.addColorStop(1, '#888');
+  ctx.fillStyle = grad;
   ctx.fillRect(rocket.x, rocket.y, rocket.width, rocket.height);
+
+  ctx.fillStyle = '#eee';
+  ctx.beginPath();
+  ctx.moveTo(rocket.x, rocket.y);
+  ctx.lineTo(rocket.x + rocket.width / 2, rocket.y - 20);
+  ctx.lineTo(rocket.x + rocket.width, rocket.y);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = '#ff4136';
+  ctx.beginPath();
+  ctx.moveTo(rocket.x - 10, rocket.y + rocket.height);
+  ctx.lineTo(rocket.x, rocket.y + rocket.height - 10);
+  ctx.lineTo(rocket.x, rocket.y + rocket.height);
+  ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(rocket.x + rocket.width + 10, rocket.y + rocket.height);
+  ctx.lineTo(rocket.x + rocket.width, rocket.y + rocket.height - 10);
+  ctx.lineTo(rocket.x + rocket.width, rocket.y + rocket.height);
+  ctx.closePath();
+  ctx.fill();
+
   if (rocket.vy < 0) {
     ctx.fillStyle = 'orange';
     ctx.beginPath();
     ctx.moveTo(rocket.x + rocket.width / 2, rocket.y + rocket.height);
-    ctx.lineTo(rocket.x + rocket.width / 2 - 10, rocket.y + rocket.height + 20);
-    ctx.lineTo(rocket.x + rocket.width / 2 + 10, rocket.y + rocket.height + 20);
+    ctx.lineTo(rocket.x + rocket.width / 2 - 10, rocket.y + rocket.height + 30);
+    ctx.lineTo(rocket.x + rocket.width / 2 + 10, rocket.y + rocket.height + 30);
     ctx.closePath();
     ctx.fill();
   }
 }
 
 function drawPlatforms() {
-  ctx.fillStyle = '#0f0';
-  platforms.forEach(p => ctx.fillRect(p.x, p.y, p.width, p.height));
+  platforms.forEach(p => {
+    const grad = ctx.createLinearGradient(p.x, p.y, p.x, p.y + p.height);
+    grad.addColorStop(0, '#0f0');
+    grad.addColorStop(1, '#090');
+    ctx.fillStyle = grad;
+    ctx.fillRect(p.x, p.y, p.width, p.height);
+  });
 }
 
 function update() {
@@ -90,6 +121,11 @@ function loop() {
   update();
   requestAnimationFrame(loop);
 }
+
+window.addEventListener('resize', () => {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+});
 
 const keys = { left: false, right: false };
 window.addEventListener('keydown', e => {
