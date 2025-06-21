@@ -253,10 +253,59 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
       }
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const drawRocket = (x, y, w, h, vy) => {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(w / 40, h / 40);
+        ctx.fillStyle = "#fff";
+        ctx.beginPath();
+        ctx.moveTo(20, 0);
+        ctx.lineTo(30, 10);
+        ctx.lineTo(30, 30);
+        ctx.lineTo(20, 40);
+        ctx.lineTo(10, 30);
+        ctx.lineTo(10, 10);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = "#f87171";
+        ctx.beginPath();
+        ctx.moveTo(20, -5);
+        ctx.lineTo(32, 10);
+        ctx.lineTo(8, 10);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = "#60a5fa";
+        ctx.fillRect(5, 28, 8, 8);
+        ctx.fillRect(27, 28, 8, 8);
+        if (vy < 0) {
+          ctx.fillStyle = "orange";
+          ctx.beginPath();
+          ctx.moveTo(20, 40);
+          ctx.lineTo(15, 48);
+          ctx.lineTo(25, 48);
+          ctx.closePath();
+          ctx.fill();
+        }
+        ctx.restore();
+      };
+
+      const drawRoundedRect = (x, y, width, height, radius) => {
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+        ctx.fill();
+      };
+
       ctx.textBaseline = "bottom";
-      ctx.font = player.h + "px sans-serif";
-      ctx.fillStyle = "#fff";
-      ctx.fillText("🚀", player.x, player.y + player.h);
+      drawRocket(player.x, player.y, player.w, player.h, player.vy);
       if (shieldRef.current > performance.now()) {
         ctx.strokeStyle = "#0ff";
         ctx.lineWidth = 3;
@@ -264,17 +313,11 @@ export default function DoodleJumpGame({ onExit, mode = "free" }) {
         ctx.arc(player.x + player.w / 2, player.y + player.h / 2, player.w, 0, Math.PI * 2);
         ctx.stroke();
       }
-      if (player.vy < 0) {
-        ctx.fillStyle = "orange";
-        ctx.beginPath();
-        ctx.moveTo(player.x + player.w / 2, player.y + player.h);
-        ctx.lineTo(player.x + player.w / 2 - 5, player.y + player.h + 10);
-        ctx.lineTo(player.x + player.w / 2 + 5, player.y + player.h + 10);
-        ctx.closePath();
-        ctx.fill();
-      }
-      ctx.fillStyle = "#0f0";
-      platforms.forEach((p) => ctx.fillRect(p.x, p.y, pW, pH));
+      const grad = ctx.createLinearGradient(0, 0, 0, pH);
+      grad.addColorStop(0, "#4ade80");
+      grad.addColorStop(1, "#22d3ee");
+      ctx.fillStyle = grad;
+      platforms.forEach((p) => drawRoundedRect(p.x, p.y, pW, pH, 4));
 
       // coins
       coins.forEach((c) => {
