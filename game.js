@@ -6,6 +6,11 @@ const scoreboard = document.getElementById('scoreboard');
 const scoreElement = document.getElementById('score');
 const bestScoreElement = document.getElementById('best-score');
 const musicToggle = document.getElementById('musicToggle');
+const pauseOverlay = document.getElementById('pauseOverlay');
+const leftButton = document.getElementById('leftButton');
+const rightButton = document.getElementById('rightButton');
+const pauseButton = document.getElementById('pauseButton');
+const touchControls = document.getElementById('touchControls');
 const jumpSound = new Audio('assets/jump.wav');
 const gameOverSound = new Audio('assets/gameover.wav');
 const music = new Audio('assets/music.mp3');
@@ -18,6 +23,7 @@ const platformImg = new Image();
 platformImg.src = 'assets/platform.png';
 
 let gameRunning = false;
+let isPaused = false;
 let rocket;
 let platforms = [];
 let keys = {};
@@ -58,6 +64,7 @@ function playGameOverSound() {
 const GRAVITY = 0.4;
 const GROUND_HEIGHT = 20;
 const PLATFORM_WIDTH = 60;
+const BASE_PLATFORM_SPEED = 1.5;
 
 function init() {
   ground = { x: 0, y: canvas.height - GROUND_HEIGHT, width: canvas.width, height: GROUND_HEIGHT };
@@ -77,7 +84,7 @@ function init() {
       y: y,
       width: PLATFORM_WIDTH,
       height: 10,
-      dx: Math.random() < 0.5 ? (Math.random() > 0.5 ? 1 : -1) * 1.5 : 0
+      dx: Math.random() < 0.5 ? (Math.random() > 0.5 ? 1 : -1) * BASE_PLATFORM_SPEED : 0
     });
     y -= 80;
   }
@@ -91,8 +98,10 @@ function init() {
 
 function loop() {
   if (!gameRunning) return;
-  update();
-  draw();
+  if (!isPaused) {
+    update();
+    draw();
+  }
   requestAnimationFrame(loop);
 }
 
@@ -105,6 +114,10 @@ function update() {
     }
   });
   platforms.forEach(p => {
+    const speedInc = Math.min(score / 1000, 3);
+    if (p.dx !== 0) {
+      p.dx = Math.sign(p.dx) * (BASE_PLATFORM_SPEED + speedInc);
+    }
     p.x += p.dx;
     if (p.x < 0 || p.x + p.width > canvas.width) {
       p.dx *= -1;
@@ -157,7 +170,8 @@ function update() {
       if (p.y > canvas.height) {
         p.y -= canvas.height;
         p.x = Math.random() * (canvas.width - PLATFORM_WIDTH);
-        p.dx = Math.random() < 0.5 ? (Math.random() > 0.5 ? 1 : -1) * 1.5 : 0;
+        const speedInc = Math.min(score / 1000, 3);
+        p.dx = Math.random() < 0.5 ? (Math.random() > 0.5 ? 1 : -1) * (BASE_PLATFORM_SPEED + speedInc) : 0;
       }
     });
     stars.forEach(s => {
@@ -179,6 +193,8 @@ function update() {
     menu.classList.add('show');
     canvas.style.display = 'none';
     scoreboard.style.display = 'none';
+    touchControls.style.display = 'none';
+    pauseOverlay.style.display = 'none';
     const best = Number(localStorage.getItem('bestScore') || 0);
     if (score > best) {
       localStorage.setItem('bestScore', score);
@@ -228,11 +244,22 @@ function draw() {
   }
 }
 
+function togglePause() {
+  if (!gameRunning) return;
+  isPaused = !isPaused;
+  pauseOverlay.style.display = isPaused ? 'flex' : 'none';
+}
+
 startButton.addEventListener('click', () => {
   menu.classList.remove('show');
   menu.style.display = 'none';
   canvas.style.display = 'block';
   scoreboard.style.display = 'block';
+  pauseOverlay.style.display = 'none';
+  isPaused = false;
+  if (window.matchMedia('(pointer: coarse)').matches) {
+    touchControls.style.display = 'flex';
+  }
   init();
   if (music.paused) {
     music.play().catch(() => {});
@@ -253,6 +280,9 @@ document.addEventListener('keydown', e => {
   if (['ArrowLeft', 'ArrowRight', 'a', 'A', 'd', 'D'].includes(e.key)) {
     e.preventDefault();
   }
+  if (e.key === 'p' || e.key === 'P') {
+    togglePause();
+  }
   keys[e.key] = true;
 });
 
@@ -260,12 +290,37 @@ document.addEventListener('keyup', e => {
   keys[e.key] = false;
 });
 
+leftButton.addEventListener('touchstart', e => {
+  e.preventDefault();
+  keys['ArrowLeft'] = true;
+});
+leftButton.addEventListener('touchend', e => {
+  e.preventDefault();
+  keys['ArrowLeft'] = false;
+});
+
+rightButton.addEventListener('touchstart', e => {
+  e.preventDefault();
+  keys['ArrowRight'] = true;
+});
+rightButton.addEventListener('touchend', e => {
+  e.preventDefault();
+  keys['ArrowRight'] = false;
+});
+
+pauseButton.addEventListener('touchstart', e => {
+  e.preventDefault();
+  togglePause();
+});
+pauseButton.addEventListener('click', togglePause);
+
 // Show the main menu when the page first loads. When the script is loaded
 // after DOMContentLoaded has already fired (e.g. because it is placed at the
 // bottom of the page), run the initialization immediately.
 function showMenu() {
   resizeCanvas();
   menu.classList.add('show');
+  touchControls.style.display = 'none';
 }
 
 if (document.readyState === 'loading') {
