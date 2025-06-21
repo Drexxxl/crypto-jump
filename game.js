@@ -15,6 +15,15 @@ let ground;
 let score = 0;
 let stars = [];
 
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  if (ground) {
+    ground.width = canvas.width;
+    ground.y = canvas.height - GROUND_HEIGHT;
+  }
+}
+
 function initStars() {
   stars = [];
   for (let i = 0; i < 50; i++) {
@@ -227,5 +236,8 @@ document.addEventListener('keyup', e => {
 
 // Show the main menu when the page first loads
 window.addEventListener('DOMContentLoaded', () => {
+  resizeCanvas();
   menu.classList.add('show');
 });
+
+window.addEventListener('resize', resizeCanvas);
