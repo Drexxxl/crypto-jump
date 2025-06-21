@@ -42,6 +42,7 @@ let player = {
 let platforms = [];
 let score = 0;
 let keys = { left: false, right: false };
+let tilt = 0;
 let platformGap = 50;
 let hasShield = false;
 let rocketActive = false;
@@ -145,6 +146,17 @@ function update() {
     s.y += s.speed * scrollSpeed;
     if (s.y > canvas.height) s.y = 0;
   });
+
+  if (tilt > 5) {
+    keys.right = true;
+    keys.left = false;
+  } else if (tilt < -5) {
+    keys.left = true;
+    keys.right = false;
+  } else {
+    keys.left = false;
+    keys.right = false;
+  }
 
   player.gravity = (0.2 + diff * 0.2) * scale;
   player.dy += player.gravity;
@@ -358,6 +370,7 @@ function endGame() {
     localStorage.setItem('highscore', highscore);
   }
   recordEl.textContent = 'Record: ' + highscore;
+  gameOverEl.textContent = 'Game Over! Score: ' + finalScore;
   gameOverEl.style.display = 'block';
   restartBtn.style.display = 'block';
   if (window.Telegram && Telegram.WebApp && Telegram.WebApp.sendData) {
@@ -379,15 +392,13 @@ function startGame() {
   loop();
 }
 
-startBtn.addEventListener('click', startGame);
-startBtn.addEventListener('pointerdown', startGame);
+function addStartHandlers(btn) {
+  btn.addEventListener('click', startGame);
+  btn.addEventListener('pointerdown', startGame);
+}
 
-restartBtn.addEventListener('click', () => {
-  startGame();
-});
-restartBtn.addEventListener('pointerdown', () => {
-  startGame();
-});
+addStartHandlers(startBtn);
+addStartHandlers(restartBtn);
 
 document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft') keys.left = true;
@@ -418,13 +429,8 @@ document.addEventListener('touchend', () => {
 
 
 window.addEventListener('deviceorientation', event => {
-  if (event.gamma) {
-    if (event.gamma > 5) keys.right = true;
-    else if (event.gamma < -5) keys.left = true;
-    else {
-      keys.left = false;
-      keys.right = false;
-    }
+  if (typeof event.gamma === 'number') {
+    tilt = event.gamma;
   }
 });
 
