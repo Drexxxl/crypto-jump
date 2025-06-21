@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>SpaceJump</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="menu">
+    <div id="stars"></div>
+    <div class="menu-ui">
+        <header>
+            <span class="currency">0</span>
+            <button id="settings" aria-label="Настройки">&#9881;</button>
+        </header>
+        <main>
+            <h1>SpaceJump</h1>
+            <button id="play">Играть</button>
+        </main>
+        <nav>
+            <a href="#" class="active">🏠</a>
+            <a href="#">🎯</a>
+            <a href="#">🏆</a>
+            <a href="#">🎒</a>
+            <a href="#">👤</a>
+        </nav>
+    </div>
+    <script>
+        document.getElementById('play').onclick = function() {
+            window.location.href = 'game.html';
+        };
+    </script>
+</body>
+</html>
