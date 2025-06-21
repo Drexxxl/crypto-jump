@@ -2,12 +2,37 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const menu = document.getElementById('menu');
 const startButton = document.getElementById('startButton');
+const scoreboard = document.getElementById('scoreboard');
+const scoreElement = document.getElementById('score');
+const bestScoreElement = document.getElementById('best-score');
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 let gameRunning = false;
 let rocket;
 let platforms = [];
 let keys = {};
 let ground;
+let score = 0;
+
+function playSound(freq, duration, type = 'sine') {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function playJumpSound() {
+  playSound(440, 0.1, 'square');
+}
+
+function playGameOverSound() {
+  playSound(220, 0.5, 'sawtooth');
+}
 const GRAVITY = 0.4;
 const GROUND_HEIGHT = 20;
 
@@ -23,9 +48,19 @@ function init() {
   platforms = [];
   let y = ground.y - 50;
   for (let i = 0; i < 7; i++) {
-    platforms.push({ x: Math.random() * 340, y: y, width: 60, height: 10 });
+    platforms.push({
+      x: Math.random() * 340,
+      y: y,
+      width: 60,
+      height: 10,
+      dx: Math.random() < 0.5 ? (Math.random() > 0.5 ? 1 : -1) * 1.5 : 0
+    });
     y -= 80;
   }
+  score = 0;
+  scoreElement.textContent = score;
+  bestScoreElement.textContent = localStorage.getItem('bestScore') || 0;
+  scoreboard.style.display = 'block';
   gameRunning = true;
   requestAnimationFrame(loop);
 }
@@ -38,6 +73,12 @@ function loop() {
 }
 
 function update() {
+  platforms.forEach(p => {
+    p.x += p.dx;
+    if (p.x < 0 || p.x + p.width > canvas.width) {
+      p.dx *= -1;
+    }
+  });
   rocket.vy += GRAVITY;
   rocket.y += rocket.vy;
 
@@ -60,6 +101,7 @@ function update() {
       rocket.y + rocket.height < ground.y + ground.height + rocket.vy
     ) {
       rocket.vy = -10;
+      playJumpSound();
     }
     // platforms
     platforms.forEach(p => {
@@ -70,6 +112,7 @@ function update() {
         rocket.y + rocket.height < p.y + p.height + rocket.vy
       ) {
         rocket.vy = -10;
+        playJumpSound();
       }
     });
   }
@@ -83,15 +126,28 @@ function update() {
       if (p.y > canvas.height) {
         p.y -= canvas.height;
         p.x = Math.random() * 340;
+        p.dx = Math.random() < 0.5 ? (Math.random() > 0.5 ? 1 : -1) * 1.5 : 0;
       }
     });
+    score += Math.floor(diff);
+    scoreElement.textContent = score;
   }
 
   // game over
   if (rocket.y > canvas.height) {
     gameRunning = false;
     menu.style.display = 'block';
+    menu.classList.add('show');
     canvas.style.display = 'none';
+    scoreboard.style.display = 'none';
+    const best = Number(localStorage.getItem('bestScore') || 0);
+    if (score > best) {
+      localStorage.setItem('bestScore', score);
+      bestScoreElement.textContent = score;
+    } else {
+      bestScoreElement.textContent = best;
+    }
+    playGameOverSound();
   }
 }
 
@@ -122,8 +178,10 @@ function draw() {
 }
 
 startButton.addEventListener('click', () => {
+  menu.classList.remove('show');
   menu.style.display = 'none';
   canvas.style.display = 'block';
+  scoreboard.style.display = 'block';
   init();
 });
 
