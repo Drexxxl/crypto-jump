@@ -1,6 +1,7 @@
+
 export const metadata = {
   title: 'SpaceJump',
-  description: 'Космическая аркада в Telegram',
+  description: 'Cosmic arcade game',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
