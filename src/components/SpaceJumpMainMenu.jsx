@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { viewport } from "@telegram-apps/sdk";
+import React, { useState } from "react";
 import {
   Home,
   List,
@@ -14,14 +13,6 @@ import { Button } from "./ui/button";
 export default function SpaceJumpMainMenu() {
   const [screen, setScreen] = useState("menu");
 
-  // try to request fullscreen once on mount in supported Telegram clients
-  useEffect(() => {
-    try {
-      viewport?.requestFullscreen?.();
-    } catch (e) {
-      // ignore errors if the method is unavailable
-    }
-  }, []);
 
   const titles = {
     play: "Режим игры",
