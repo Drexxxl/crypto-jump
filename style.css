@@ -7,9 +7,21 @@ body {
 }
 #menu {
   margin-top: 100px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+#menu.show {
+  opacity: 1;
 }
 #gameCanvas {
   background: #000;
   display: block;
   margin: 0 auto;
+}
+
+#scoreboard {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 20px;
 }
