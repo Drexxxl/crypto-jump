@@ -1,8 +1,16 @@
-import { Button } from "./ui/button";
-import { Home, List, Trophy, Grid, User } from "lucide-react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { Home, List, Trophy, Grid, User, ChevronLeft } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function SpaceJumpMainMenu() {
+  const [screen, setScreen] = useState("menu");
+
+  const ScreenContent = ({ title }) => (
+    <div className="flex flex-col items-center justify-center h-full text-white text-2xl">
+      {title}
+    </div>
+  );
+
   return (
     <div className="relative w-full min-h-screen bg-black overflow-hidden p-8 flex flex-col">
       {/* Новый CSS-анимированный звёздный фон */}
@@ -12,34 +20,59 @@ export default function SpaceJumpMainMenu() {
 
       {/* Верхняя панель */}
       <div className="absolute top-8 left-0 right-0 z-10 flex justify-between items-center px-4 md:px-8">
-        <div className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform">
-          <img src="https://cdn-icons-png.flaticon.com/512/3791/3791513.png" alt="TON" className="w-6 h-6" />
-        </div>
+        {screen !== "menu" ? (
+          <button onClick={() => setScreen("menu")} className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform">
+            <ChevronLeft className="w-6 h-6 text-white" />
+          </button>
+        ) : (
+          <div className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform">
+            <img src="https://cdn-icons-png.flaticon.com/512/3791/3791513.png" alt="TON" className="w-6 h-6" />
+          </div>
+        )}
         <h1 className="text-white text-4xl md:text-5xl font-black tracking-widest">SpaceJump</h1>
         <div className="icon-wrapper w-12 h-12 hover:scale-105 transition-transform">
           <img src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png" alt="Settings" className="w-6 h-6" />
         </div>
       </div>
 
-      {/* Главная кнопка Играть */}
-      <div className="flex grow justify-center items-center z-10 relative">
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          className="bg-white text-black w-48 h-48 md:w-64 md:h-64 text-5xl md:text-6xl font-bold rounded-full shadow-2xl flex items-center justify-center neon-button"
-        >
-          ▶
-        </motion.button>
-      </div>
+      {screen === "menu" && (
+        <>
+          {/* Главная кнопка Играть */}
+          <div className="flex grow justify-center items-center z-10 relative">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setScreen("play")}
+              className="bg-white text-black w-48 h-48 md:w-64 md:h-64 text-5xl md:text-6xl font-bold rounded-full shadow-2xl flex items-center justify-center neon-button"
+            >
+              ▶
+            </motion.button>
+          </div>
 
-      {/* Нижнее меню */}
-      <div className="absolute bottom-8 w-full flex justify-center gap-6 md:gap-12 z-10 text-white">
-        <IconButton icon={<Home />} />
-        <IconButton icon={<List />} />
-        <IconButton icon={<Trophy />} />
-        <IconButton icon={<Grid />} />
-        <IconButton icon={<User />} />
-      </div>
+          {/* Нижнее меню */}
+          <div className="absolute bottom-8 w-full flex justify-center gap-6 md:gap-12 z-10 text-white">
+            <IconButton icon={<Home />} onClick={() => setScreen("home")}/>
+            <IconButton icon={<List />} onClick={() => setScreen("list")}/>
+            <IconButton icon={<Trophy />} onClick={() => setScreen("trophy")}/>
+            <IconButton icon={<Grid />} onClick={() => setScreen("grid")}/>
+            <IconButton icon={<User />} onClick={() => setScreen("profile")}/>
+          </div>
+        </>
+      )}
+
+      <AnimatePresence>
+        {screen !== "menu" && (
+          <motion.div
+            key={screen}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex grow items-center justify-center z-10"
+          >
+            <ScreenContent title={screen === "play" ? "Игра скоро" : screen === "home" ? "Главная" : screen === "list" ? "Таблица лидеров" : screen === "trophy" ? "Достижения" : screen === "grid" ? "Меню" : "Профиль"} />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <style jsx>{`
         .stars-layer {
@@ -88,12 +121,12 @@ export default function SpaceJumpMainMenu() {
   );
 }
 
-function IconButton({ icon }) {
+function IconButton({ icon, onClick }) {
   return (
-    <div className="hover:scale-105 transition-transform">
+    <button onClick={onClick} className="hover:scale-105 transition-transform">
       <div className="icon-wrapper">
         {icon}
       </div>
-    </div>
+    </button>
   );
 }
